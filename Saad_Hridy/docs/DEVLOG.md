@@ -67,6 +67,8 @@
   * **`Jogging.fbx`**: Energetic jog/sprint cycle with normalized in-place trajectory.
 * Rebuilt **[`scenes/saad_model_animated.tscn`](../scenes/saad_model_animated.tscn)** with the new base mesh, complete with full PBR materials (face/skin, hair, clothes, and boots).
 * Validated complete integration in Godot 4.7 Forward+ engine with 0 errors!
+* Initialized Git with Git LFS (for 3D models and 4K textures) and published to private GitHub repository:
+  * URL: **`https://github.com/TalhaKun07-ipe/project-hollow-streets`**
 
 ### Next Session Priorities
 1. Apply Phase 2 environment fixes:
