@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://bqplayer003"]
+
+[ext_resource type="Script" uid="uid://b5pe4ko1j7lw8" path="res://scripts/player.gd" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/saad_model_animated.tscn" id="2_model"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+radius = 0.4
+height = 1.85
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_torch"]
+top_radius = 0.0010000002
+bottom_radius = 0.010999998
+height = 0.25981444
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_torch"]
+albedo_color = Color(0.2, 0.12, 0.06, 1)
+roughness = 0.9
+
+[node name="Player" type="CharacterBody3D" unique_id=177370376]
+collision_layer = 2
+floor_max_angle = 0.8
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1720244916]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.925, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="SaadModel" parent="." unique_id=852341568 instance=ExtResource("2_model")]
+transform = Transform3D(-100, 0, 0, 0, 100, 0, 0, 0, -100, 0, 0, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="." unique_id=1281747175]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+spring_length = 4.2
+margin = 0.25
+
+[node name="Camera3D" type="Camera3D" parent="SpringArm3D" unique_id=1155989359]
+current = true
+fov = 80.9
+
+[node name="Torch" type="Node3D" parent="." unique_id=1802913112]
+transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, 0.35, 1.25, -0.2)
+
+[node name="TorchMesh" type="MeshInstance3D" parent="Torch" unique_id=947187937]
+transform = Transform3D(-1.3811569, -0.58010125, -0.07673616, -0.180489, 0.23521793, 1.4704068, -0.5566235, 1.3631417, -0.28638315, 0, 0, 0)
+mesh = SubResource("CylinderMesh_torch")
+surface_material_override/0 = SubResource("StandardMaterial3D_torch")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Torch" unique_id=1526126201]
+transform = Transform3D(0.98755205, 0.053796515, -0.1478048, 0, 0.9396927, 0.34202, 0.15729058, -0.33776253, 0.9279955, 0.05, -0.05, -0.1)
+light_color = Color(1, 0.85, 0.55, 1)
+light_energy = 5.0
+light_indirect_energy = 1.4
+shadow_enabled = true
+spot_range = 72.389
+spot_attenuation = -0.09
+spot_angle = 44.500008
+spot_angle_attenuation = 1.3

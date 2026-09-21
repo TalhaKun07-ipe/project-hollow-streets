@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://6jveukyc07hf"
+path="res://.godot/imported/saad_model.obj-b99c388c3e20d99a74c05f841565491f.mesh"
+
+[deps]
+
+files=["res://.godot/imported/saad_model.obj-b99c388c3e20d99a74c05f841565491f.mesh"]
+
+source_file="res://assets/saad_model.obj"
+dest_files=["res://.godot/imported/saad_model.obj-b99c388c3e20d99a74c05f841565491f.mesh", "res://.godot/imported/saad_model.obj-b99c388c3e20d99a74c05f841565491f.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

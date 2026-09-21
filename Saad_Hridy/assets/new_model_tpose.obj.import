@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bfvwdh31s7p4x"
+path="res://.godot/imported/new_model_tpose.obj-55bad5893133fe77c08c8cd11e6dcb7f.mesh"
+
+[deps]
+
+files=["res://.godot/imported/new_model_tpose.obj-55bad5893133fe77c08c8cd11e6dcb7f.mesh"]
+
+source_file="res://assets/new_model_tpose.obj"
+dest_files=["res://.godot/imported/new_model_tpose.obj-55bad5893133fe77c08c8cd11e6dcb7f.mesh", "res://.godot/imported/new_model_tpose.obj-55bad5893133fe77c08c8cd11e6dcb7f.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

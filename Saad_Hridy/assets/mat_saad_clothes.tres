@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/saad_clothes_diffuse.jpg" id="1_d4q6f"]
+[ext_resource type="Texture2D" path="res://assets/saad_clothes_normal.jpg" id="2_pq4e1"]
+
+[resource]
+resource_name = "SaadClothes"
+albedo_texture = ExtResource("1_d4q6f")
+roughness = 0.75
+normal_enabled = true
+normal_texture = ExtResource("2_pq4e1")
