@@ -1,5 +1,16 @@
-Saad_Hridy/textures/*.png filter=lfs diff=lfs merge=lfs -text
-Saad_Hridy/texture/textures/*.png filter=lfs diff=lfs merge=lfs -text
-Saad_Hridy/assets/*.fbx filter=lfs diff=lfs merge=lfs -text
-Saad_Hridy/assets/*.glb filter=lfs diff=lfs merge=lfs -text
-Saad_Hridy/assets/*.obj filter=lfs diff=lfs merge=lfs -text
+# Standard Git configuration for Godot projects (no Git LFS required)
+* text=auto eol=lf
+*.bat text eol=crlf
+
+# Ensure 3D models and binary textures are treated as binary
+*.png binary
+*.jpg binary
+*.glb binary
+*.fbx binary
+*.obj binary
+
+# Ensure Godot text scenes, scripts, and resources preserve proper line endings
+*.tres text eol=lf
+*.tscn text eol=lf
+*.gd text eol=lf
+*.godot text eol=lf

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#818cf8" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <rect width="124" height="124" x="2" y="2" rx="26" fill="none" stroke="#334155" stroke-width="2"/>
+  
+  <!-- Stylized Alley Buildings Perspective -->
+  <polygon points="16,112 36,36 48,44 48,112" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+  <polygon points="112,112 92,36 80,44 80,112" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+  
+  <!-- Street Path Perspective -->
+  <polygon points="48,112 80,112 68,56 60,56" fill="url(#glow)"/>
+  
+  <!-- Glowing Streetlamp / Torch light -->
+  <circle cx="64" cy="40" r="10" fill="url(#accent)"/>
+  <circle cx="64" cy="40" r="18" fill="#f59e0b" opacity="0.25"/>
+  
+  <!-- Hero Silhouette -->
+  <path d="M64,68 C61,68 59,70 59,73 L58,88 L62,88 L62,106 L66,106 L66,88 L70,88 L69,73 C69,70 67,68 64,68 Z" fill="#f8fafc"/>
+  <circle cx="64" cy="63" r="4" fill="#f8fafc"/>
+</svg>

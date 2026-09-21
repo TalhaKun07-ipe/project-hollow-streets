@@ -70,6 +70,28 @@
 * Initialized Git with Git LFS (for 3D models and 4K textures) and published to private GitHub repository:
   * URL: **`https://github.com/TalhaKun07-ipe/project-hollow-streets`**
 
+---
+
+## 📅 Session 3 — Collaborator Compatibility Fix & Root Restructuring (Current)
+
+### 🐛 Identified Issues on Collaborator Machines
+1. **Repository Structure**: Godot project was nested inside `Saad_Hridy/`, preventing Godot Project Manager from detecting `project.godot` at the repository root when cloned or downloaded.
+2. **Git LFS Pointer Corruption**: Collaborators downloading the repository as a ZIP from GitHub or cloning without Git LFS received 130-byte text pointers instead of binary `.fbx`, `.glb`, and `.png` files, causing `ufbx`, `glTF`, and PNG decode crashes in Godot.
+3. **Missing `icon.svg`**: `project.godot` referenced `res://icon.svg`, which threw missing file errors on startup.
+4. **Engine Version Tag**: `config/features` was locked to `"4.7"`, causing compatibility warnings on standard Godot 4.3 / 4.2 installs.
+5. **Overweight 4K Textures**: 4K textures (98MB each) were causing long import times and required Git LFS.
+
+### 🛠️ Key Fixes Implemented
+* **Promoted Godot Project to Root**: Placed `project.godot`, `scenes/`, `scripts/`, `assets/`, `textures/`, `texture/`, and `docs/` directly at the repository root. Cloned repo is now immediately detected by Godot 4.
+* **Eliminated Git LFS Dependency**:
+  * Optimized uncompressed 4K PNG textures to crisp 2048x2048 PNGs (reducing individual file sizes from ~98 MB down to ~7-9 MB).
+  * Removed all Git LFS filters from `.gitattributes`.
+  * All 3D models (`.fbx`, `.glb`) and textures are now stored natively as regular Git binary blobs (< 10 MB each, total repo size < 65 MB).
+  * Collaborators can now use standard `git clone` or "Download ZIP" with zero additional setup or Git LFS software required.
+* **Added `icon.svg`**: Designed a clean, modern SVG vector icon for Project Hollow Streets.
+* **Standardized Engine Tag**: Updated `config/features` to `"4.3", "Forward Plus"`, ensuring clean opening across all Godot 4.x versions.
+* **Verified Headless Import & Game Run**: Verified that Godot imports all 58 assets in 2 seconds and runs `main.tscn` with 0 errors or warnings.
+
 ### Next Session Priorities
 1. Apply Phase 2 environment fixes:
    - Fix ground metallic property (`metallic = 0.0` in `main.tscn`).
@@ -77,3 +99,4 @@
    - Add lamppost pole 3D meshes under floating streetlights.
    - Enable volumetric fog in `WorldEnvironment`.
 2. Build the Hridy character entity and interactive quest resolution trigger.
+

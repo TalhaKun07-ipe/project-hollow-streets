@@ -1,9 +1,11 @@
 # Godot 4+ cache and build artifacts
 .godot/
-**/ .godot/
 *.translation
 
-# Mono / C# specific (if added later)
+# Local legacy folder (now promoted to repository root)
+Saad_Hridy/
+
+# Mono / C# specific
 .mono/
 data_*/
 mono_crash.*.json
