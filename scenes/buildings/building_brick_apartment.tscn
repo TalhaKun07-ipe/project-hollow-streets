@@ -1,0 +1,250 @@
+[gd_scene format=3 uid="uid://dbaprtbld001"]
+
+[ext_resource type="Texture2D" uid="uid://d4krshyl4l5he" path="res://textures/building_brick_facade.png" id="1_brick"]
+[ext_resource type="Texture2D" uid="uid://ddw82osgo1pc0" path="res://textures/building_brick_nor.png" id="2_brick_nor"]
+[ext_resource type="Texture2D" uid="uid://bnpbfj42d2ppm" path="res://textures/building_brick_rough.png" id="3_brick_rough"]
+[ext_resource type="Texture2D" uid="uid://dypjmv6gl3y65" path="res://textures/building_entrance_door.png" id="4_door"]
+[ext_resource type="Texture2D" uid="uid://bkfe6wwxtygot" path="res://textures/building_door_nor.png" id="5_door_nor"]
+[ext_resource type="Texture2D" uid="uid://b6u1w3ltlgpq4" path="res://textures/roof_gravel_tar.png" id="6_roof"]
+[ext_resource type="Texture2D" uid="uid://o0k6scujgv5v" path="res://textures/roof_gravel_tar_nor.png" id="7_roof_nor"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_brick"]
+albedo_texture = ExtResource("1_brick")
+roughness_texture = ExtResource("3_brick_rough")
+normal_enabled = true
+normal_texture = ExtResource("2_brick_nor")
+uv1_scale = Vector3(3, 4, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_main"]
+material = SubResource("StandardMaterial3D_brick")
+size = Vector3(16, 18, 14)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_main"]
+size = Vector3(16, 18, 14)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trim"]
+albedo_color = Color(0.25, 0.22, 0.2, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_parapet_front"]
+material = SubResource("StandardMaterial3D_trim")
+size = Vector3(16.4, 0.8, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_parapet_side"]
+material = SubResource("StandardMaterial3D_trim")
+size = Vector3(0.4, 0.8, 14.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_roof"]
+albedo_texture = ExtResource("6_roof")
+normal_enabled = true
+normal_texture = ExtResource("7_roof_nor")
+uv1_scale = Vector3(4, 4, 4)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_roof"]
+material = SubResource("StandardMaterial3D_roof")
+size = Vector2(15.6, 13.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_door"]
+albedo_texture = ExtResource("4_door")
+normal_enabled = true
+normal_texture = ExtResource("5_door_nor")
+roughness = 0.35
+
+[sub_resource type="BoxMesh" id="BoxMesh_door"]
+material = SubResource("StandardMaterial3D_door")
+size = Vector3(1.7, 2.3, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_stoop"]
+material = SubResource("StandardMaterial3D_trim")
+size = Vector3(3.4, 0.35, 1.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_canopy"]
+material = SubResource("StandardMaterial3D_trim")
+size = Vector3(2.6, 0.2, 1.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_win_lit"]
+albedo_color = Color(0.95, 0.85, 0.6, 1)
+emission_enabled = true
+emission = Color(1, 0.88, 0.62, 1)
+emission_energy_multiplier = 1.6
+roughness = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_win_dark"]
+albedo_color = Color(0.08, 0.1, 0.13, 1)
+metallic = 0.5
+roughness = 0.15
+
+[sub_resource type="BoxMesh" id="BoxMesh_window"]
+size = Vector3(1.3, 1.8, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sill"]
+material = SubResource("StandardMaterial3D_trim")
+size = Vector3(1.6, 0.15, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ac"]
+material = SubResource("StandardMaterial3D_trim")
+size = Vector3(1.8, 1.2, 1.4)
+
+[node name="BrickApartment" type="StaticBody3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+shape = SubResource("BoxShape3D_main")
+
+[node name="MainMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+mesh = SubResource("BoxMesh_main")
+
+[node name="Roof" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.01, 0)
+mesh = SubResource("PlaneMesh_roof")
+
+[node name="ParapetFront" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.4, 7.05)
+mesh = SubResource("BoxMesh_parapet_front")
+
+[node name="ParapetBack" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.4, -7.05)
+mesh = SubResource("BoxMesh_parapet_front")
+
+[node name="ParapetLeft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.05, 18.4, 0)
+mesh = SubResource("BoxMesh_parapet_side")
+
+[node name="ParapetRight" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.05, 18.4, 0)
+mesh = SubResource("BoxMesh_parapet_side")
+
+[node name="EntranceStoop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, 7.7)
+mesh = SubResource("BoxMesh_stoop")
+
+[node name="EntranceDoor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 7.04)
+mesh = SubResource("BoxMesh_door")
+
+[node name="EntranceCanopy" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.75, 7.55)
+mesh = SubResource("BoxMesh_canopy")
+
+[node name="DoorLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.65, 7.5)
+light_color = Color(1, 0.88, 0.65, 1)
+light_energy = 1.5
+omni_range = 8.0
+
+[node name="Win_F2_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 6.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_lit")
+
+[node name="Sill_F2_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 5.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="Win_F2_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0, 6.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_dark")
+
+[node name="Sill_F2_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0, 5.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="Win_F2_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0, 6.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_lit")
+
+[node name="Sill_F2_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0, 5.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="Win_F2_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 6.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_dark")
+
+[node name="Sill_F2_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 5.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="Win_F3_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 10.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_dark")
+
+[node name="Sill_F3_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 9.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="Win_F3_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0, 10.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_lit")
+
+[node name="Sill_F3_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0, 9.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="Win_F3_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0, 10.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_lit")
+
+[node name="Sill_F3_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0, 9.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="Win_F3_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 10.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_dark")
+
+[node name="Sill_F3_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 9.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="Win_F4_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 14.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_lit")
+
+[node name="Sill_F4_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 13.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="Win_F4_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0, 14.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_dark")
+
+[node name="Sill_F4_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0, 13.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="Win_F4_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0, 14.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_lit")
+
+[node name="Sill_F4_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0, 13.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="Win_F4_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 14.5, 7.05)
+mesh = SubResource("BoxMesh_window")
+surface_material_override/0 = SubResource("StandardMaterial3D_win_lit")
+
+[node name="Sill_F4_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 13.55, 7.15)
+mesh = SubResource("BoxMesh_sill")
+
+[node name="RoofAC" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 18.6, 2.0)
+mesh = SubResource("BoxMesh_ac")
+
+[node name="RoofAC2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 18.6, -2.0)
+mesh = SubResource("BoxMesh_ac")

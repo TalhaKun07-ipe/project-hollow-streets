@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmvypoptwxwn0"
-path="res://.godot/imported/rock_wall_17_disp_4k.png-8d8172acaae93f2e54733a21715bec36.ctex"
+uid="uid://cquiwv4vxdg63"
+path="res://.godot/imported/building_concrete_panels.png-00067d643aca056a56962fcd315f95d3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://texture/textures/rock_wall_17_disp_4k.png"
-dest_files=["res://.godot/imported/rock_wall_17_disp_4k.png-8d8172acaae93f2e54733a21715bec36.ctex"]
+source_file="res://textures/building_concrete_panels.png"
+dest_files=["res://.godot/imported/building_concrete_panels.png-00067d643aca056a56962fcd315f95d3.ctex"]
 
 [params]
 

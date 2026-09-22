@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://dstrtlamp001"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
+albedo_color = Color(0.14, 0.16, 0.18, 1)
+metallic = 0.85
+roughness = 0.35
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_base"]
+material = SubResource("StandardMaterial3D_metal")
+top_radius = 0.18
+bottom_radius = 0.3
+height = 0.45
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pole"]
+material = SubResource("StandardMaterial3D_metal")
+top_radius = 0.07
+bottom_radius = 0.09
+height = 4.8
+radial_segments = 12
+
+[sub_resource type="BoxMesh" id="BoxMesh_arm"]
+material = SubResource("StandardMaterial3D_metal")
+size = Vector3(0.1, 0.1, 1.1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_fixture"]
+material = SubResource("StandardMaterial3D_metal")
+top_radius = 0.24
+bottom_radius = 0.15
+height = 0.22
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glass_lit"]
+albedo_color = Color(1, 0.95, 0.82, 1)
+roughness = 0.1
+emission_enabled = true
+emission = Color(1, 0.92, 0.72, 1)
+emission_energy_multiplier = 4.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_bulb"]
+material = SubResource("StandardMaterial3D_glass_lit")
+radius = 0.12
+height = 0.24
+radial_segments = 12
+rings = 6
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_col"]
+height = 5.0
+radius = 0.2
+
+[node name="StreetLamp" type="StaticBody3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+shape = SubResource("CylinderShape3D_col")
+
+[node name="BaseMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.225, 0)
+mesh = SubResource("CylinderMesh_base")
+
+[node name="PoleMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 0)
+mesh = SubResource("CylinderMesh_pole")
+
+[node name="ArmMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 4.95, 0.5)
+mesh = SubResource("BoxMesh_arm")
+
+[node name="FixtureMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.82, 1.0)
+mesh = SubResource("CylinderMesh_fixture")
+
+[node name="BulbMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.74, 1.0)
+mesh = SubResource("SphereMesh_bulb")
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.65, 1.0)
+light_color = Color(1, 0.91, 0.74, 1)
+light_energy = 2.4
+shadow_enabled = true
+omni_range = 18.0
+omni_attenuation = 1.2

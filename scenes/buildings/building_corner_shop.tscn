@@ -1,0 +1,128 @@
+[gd_scene format=3 uid="uid://dbcornershp01"]
+
+[ext_resource type="Texture2D" uid="uid://d4krshyl4l5he" path="res://textures/building_brick_facade.png" id="1_brick"]
+[ext_resource type="Texture2D" uid="uid://ddw82osgo1pc0" path="res://textures/building_brick_nor.png" id="2_brick_nor"]
+[ext_resource type="Texture2D" uid="uid://bnpbfj42d2ppm" path="res://textures/building_brick_rough.png" id="3_brick_rough"]
+[ext_resource type="Texture2D" uid="uid://drqalx2g21qfo" path="res://textures/building_storefront.png" id="4_store"]
+[ext_resource type="Texture2D" uid="uid://qutspddg1vic" path="res://textures/building_storefront_nor.png" id="5_store_nor"]
+[ext_resource type="Texture2D" uid="uid://dgcoaw75nxx6o" path="res://textures/building_storefront_rough.png" id="6_store_rough"]
+[ext_resource type="Texture2D" uid="uid://b6u1w3ltlgpq4" path="res://textures/roof_gravel_tar.png" id="7_roof"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_upper"]
+albedo_texture = ExtResource("1_brick")
+roughness_texture = ExtResource("3_brick_rough")
+normal_enabled = true
+normal_texture = ExtResource("2_brick_nor")
+uv1_scale = Vector3(2.5, 2, 2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_upper"]
+material = SubResource("StandardMaterial3D_upper")
+size = Vector3(14, 5.5, 12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_store"]
+albedo_texture = ExtResource("4_store")
+roughness_texture = ExtResource("6_store_rough")
+normal_enabled = true
+normal_texture = ExtResource("5_store_nor")
+uv1_scale = Vector3(2, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_store"]
+material = SubResource("StandardMaterial3D_store")
+size = Vector3(14.05, 4.5, 12.05)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_main"]
+size = Vector3(14, 10, 12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_awning"]
+albedo_color = Color(0.18, 0.45, 0.35, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_awning"]
+material = SubResource("StandardMaterial3D_awning")
+size = Vector3(13.5, 0.2, 1.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_roof"]
+albedo_texture = ExtResource("7_roof")
+uv1_scale = Vector3(3, 3, 3)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_roof"]
+material = SubResource("StandardMaterial3D_roof")
+size = Vector2(13.6, 11.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trim"]
+albedo_color = Color(0.2, 0.2, 0.22, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_parapet_ns"]
+material = SubResource("StandardMaterial3D_trim")
+size = Vector3(14.4, 0.6, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_parapet_ew"]
+material = SubResource("StandardMaterial3D_trim")
+size = Vector3(0.3, 0.6, 12.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_win_lit"]
+albedo_color = Color(1, 0.9, 0.65, 1)
+emission_enabled = true
+emission = Color(1, 0.9, 0.65, 1)
+emission_energy_multiplier = 1.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_upper_win"]
+material = SubResource("StandardMaterial3D_win_lit")
+size = Vector3(1.4, 1.8, 0.1)
+
+[node name="CornerShop" type="StaticBody3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+shape = SubResource("BoxShape3D_main")
+
+[node name="GroundFloorShop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 0)
+mesh = SubResource("BoxMesh_store")
+
+[node name="UpperFloor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.25, 0)
+mesh = SubResource("BoxMesh_upper")
+
+[node name="Roof" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.01, 0)
+mesh = SubResource("PlaneMesh_roof")
+
+[node name="ParapetFront" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.3, 6.05)
+mesh = SubResource("BoxMesh_parapet_ns")
+
+[node name="ParapetBack" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.3, -6.05)
+mesh = SubResource("BoxMesh_parapet_ns")
+
+[node name="ParapetLeft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.05, 10.3, 0)
+mesh = SubResource("BoxMesh_parapet_ew")
+
+[node name="ParapetRight" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.05, 10.3, 0)
+mesh = SubResource("BoxMesh_parapet_ew")
+
+[node name="Awning" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 2.85, 6.7)
+mesh = SubResource("BoxMesh_awning")
+
+[node name="ShopLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.65, 6.6)
+light_color = Color(1, 0.92, 0.78, 1)
+light_energy = 2.2
+omni_range = 10.0
+
+[node name="UpperWin1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0, 7.5, 6.06)
+mesh = SubResource("BoxMesh_upper_win")
+
+[node name="UpperWin2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 7.5, 6.06)
+mesh = SubResource("BoxMesh_upper_win")
+
+[node name="UpperWin3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0, 7.5, 6.06)
+mesh = SubResource("BoxMesh_upper_win")

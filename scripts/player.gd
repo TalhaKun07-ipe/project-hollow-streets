@@ -4,7 +4,8 @@ extends CharacterBody3D
 # Saad - looking for Hridy
 #
 # Powered by imported Mixamo skeletal animations (Idle, Walk, Run)
-# with procedural turning lean, dynamic footstep scaling, and landing impact.
+# with procedural turning lean, dynamic footstep scaling, landing impact,
+# and physical procedural flashlight system with tactile click audio and micro-flicker.
 
 @export var walk_speed: float = 4.5
 @export var run_speed: float = 7.5
@@ -12,7 +13,7 @@ extends CharacterBody3D
 @export var acceleration: float = 14.0
 @export var friction: float = 12.0
 @export var mouse_sensitivity: float = 0.0025
-@export var camera_distance: float = 4.2
+@export var camera_distance: float = 3.3
 
 # Dynamic body response
 @export var lean_amount: float = 0.08
@@ -21,6 +22,11 @@ extends CharacterBody3D
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
+const FOOTSTEP_STREAM: AudioStream = preload("res://assets/saad given assets/footsteps sounds.mp3")
+const LAND_SOUND: AudioStream = preload("res://assets/audio/footstep_land.wav")
+const FLASHLIGHT_ON: AudioStream = preload("res://assets/audio/flashlight_click_on.wav")
+const FLASHLIGHT_OFF: AudioStream = preload("res://assets/audio/flashlight_click_off.wav")
+
 @onready var spring_arm: SpringArm3D = $SpringArm3D
 @onready var camera: Camera3D = $SpringArm3D/Camera3D
 @onready var torch_light: SpotLight3D = $Torch/SpotLight3D
@@ -28,27 +34,48 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var saad_model: Node3D = $SaadModel
 @onready var torch: Node3D = $Torch
 @onready var anim_player: AnimationPlayer = $SaadModel.find_child("AnimationPlayer", true, false)
+@onready var footstep_player: AudioStreamPlayer3D = get_node_or_null("FootstepPlayer")
+@onready var landing_player: AudioStreamPlayer3D = get_node_or_null("LandingPlayer")
+@onready var flashlight_player: AudioStreamPlayer3D = get_node_or_null("FlashlightPlayer")
 
 var torch_on: bool = true
 var current_speed: float = 0.0
-var original_model_scale: Vector3 = Vector3(-100.0, 100.0, -100.0)
-var original_torch_pos: Vector3 = Vector3.ZERO
+var original_model_scale: Vector3 = Vector3(-112.0, 112.0, -112.0)
 var was_on_floor: bool = true
 var landing_timer: float = 0.0
 var current_lean: float = 0.0
 
+# Flashlight procedural pose offsets
+var torch_raised_pos: Vector3 = Vector3(0.35, 1.25, -0.2)
+var torch_lowered_pos: Vector3 = Vector3(0.28, 0.85, 0.05)
+var torch_raised_rot: Vector3 = Vector3(0.0, 0.0, 0.0)
+var torch_lowered_rot: Vector3 = Vector3(deg_to_rad(-45.0), deg_to_rad(15.0), 0.0)
+var torch_tween: Tween = null
+var flicker_tween: Tween = null
+
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-	if torch_light:
-		torch_light.visible = true
-	if torch_mesh:
-		torch_mesh.visible = true
-
 	if saad_model:
 		original_model_scale = saad_model.scale
+
+	# Initialize footstep continuous audio stream
+	if footstep_player and is_inside_tree():
+		footstep_player.stream = FOOTSTEP_STREAM
+		footstep_player.volume_db = -80.0
+		footstep_player.pitch_scale = 1.0
+		footstep_player.play()
+		footstep_player.stream_paused = true
+
+	# Set initial torch state
 	if torch:
-		original_torch_pos = torch.position
+		torch.position = torch_raised_pos
+		torch.rotation = torch_raised_rot
+	if torch_light:
+		torch_light.visible = true
+		torch_light.light_energy = 5.2
+	if torch_mesh:
+		torch_mesh.visible = true
 
 	if anim_player and anim_player.has_animation("idle"):
 		anim_player.play("idle")
@@ -67,10 +94,55 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	if event.is_action_pressed("toggle_torch"):
 		torch_on = not torch_on
+		_toggle_flashlight(torch_on)
+
+func _toggle_flashlight(enable: bool) -> void:
+	if torch_light == null:
+		torch_light = get_node_or_null("Torch/SpotLight3D")
+	if torch == null:
+		torch = get_node_or_null("Torch")
+	if flashlight_player == null:
+		flashlight_player = get_node_or_null("FlashlightPlayer")
+
+	if torch_tween and torch_tween.is_valid():
+		torch_tween.kill()
+	if flicker_tween and flicker_tween.is_valid():
+		flicker_tween.kill()
+
+	torch_tween = create_tween().set_parallel(true)
+
+	if enable:
+		if flashlight_player and is_inside_tree():
+			flashlight_player.stream = FLASHLIGHT_ON
+			flashlight_player.pitch_scale = randf_range(0.98, 1.02)
+			flashlight_player.play()
+
+		# Smoothly raise flashlight to aiming position
+		if torch:
+			torch_tween.tween_property(torch, "position", torch_raised_pos, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			torch_tween.tween_property(torch, "rotation", torch_raised_rot, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+		# Micro-flicker on light activation (bulb warm-up)
 		if torch_light:
-			torch_light.visible = torch_on
-		if torch_mesh:
-			torch_mesh.visible = torch_on
+			torch_light.visible = true
+			torch_light.light_energy = 0.0
+			flicker_tween = create_tween()
+			flicker_tween.tween_property(torch_light, "light_energy", 3.2, 0.03)
+			flicker_tween.tween_property(torch_light, "light_energy", 0.8, 0.02)
+			flicker_tween.tween_property(torch_light, "light_energy", 5.2, 0.04)
+	else:
+		if flashlight_player and is_inside_tree():
+			flashlight_player.stream = FLASHLIGHT_OFF
+			flashlight_player.pitch_scale = randf_range(0.98, 1.02)
+			flashlight_player.play()
+
+		if torch_light:
+			torch_light.visible = false
+
+		# Lower flashlight toward hip resting pose (stays visible on player body)
+		if torch:
+			torch_tween.tween_property(torch, "position", torch_lowered_pos, 0.26).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+			torch_tween.tween_property(torch, "rotation", torch_lowered_rot, 0.26).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 
 func _physics_process(delta: float) -> void:
 	# Gravity
@@ -103,7 +175,28 @@ func _physics_process(delta: float) -> void:
 	var just_landed := is_on_floor() and not was_on_floor
 	if just_landed:
 		landing_timer = 0.12
+		if landing_player and is_inside_tree():
+			landing_player.stream = LAND_SOUND
+			landing_player.pitch_scale = randf_range(0.95, 1.05)
+			landing_player.volume_db = 0.0
+			landing_player.play()
 	was_on_floor = is_on_floor()
+
+	# Footsteps audio handling (Continuous rhythmic stream from saad given assets)
+	if footstep_player:
+		var is_moving_on_ground := is_on_floor() and current_speed > 0.6
+		if is_moving_on_ground:
+			if footstep_player.stream_paused:
+				footstep_player.stream_paused = false
+			# Modulate pitch by movement speed (walk: ~1.0, run: ~1.35)
+			var speed_ratio := clampf((current_speed - walk_speed * 0.5) / (run_speed - walk_speed * 0.5), 0.0, 1.0)
+			var target_pitch := lerpf(0.95, 1.35, speed_ratio)
+			footstep_player.pitch_scale = lerpf(footstep_player.pitch_scale, target_pitch, 8.0 * delta)
+			footstep_player.volume_db = lerpf(footstep_player.volume_db, -2.0, 12.0 * delta)
+		else:
+			footstep_player.volume_db = lerpf(footstep_player.volume_db, -80.0, 14.0 * delta)
+			if footstep_player.volume_db < -50.0 and not footstep_player.stream_paused:
+				footstep_player.stream_paused = true
 
 	move_and_slide()
 
@@ -119,7 +212,6 @@ func _update_animation(delta: float, move_dir: Vector3) -> void:
 	# --- Skeletal Animation Playback ---
 	if anim_player:
 		if not is_on_floor():
-			# Keep current pose or slow it down during airtime
 			anim_player.speed_scale = 0.5
 		elif current_speed > 5.0:
 			if anim_player.current_animation != "run":
@@ -145,10 +237,10 @@ func _update_animation(delta: float, move_dir: Vector3) -> void:
 	if saad_model:
 		saad_model.rotation.z = -current_lean
 
-	# --- Torch sway follow ---
-	if torch:
+	# --- Torch sway follow when raised ---
+	if torch and torch_on and (torch_tween == null or not torch_tween.is_valid()):
 		var sway_offset := sin(Time.get_ticks_msec() * 0.008) * torch_sway * speed_factor
-		torch.position.x = lerpf(torch.position.x, original_torch_pos.x + sway_offset, delta * 6.0)
+		torch.position.x = lerpf(torch.position.x, torch_raised_pos.x + sway_offset, delta * 6.0)
 
 	# --- Landing squash & stretch recovery ---
 	if landing_timer > 0.0:

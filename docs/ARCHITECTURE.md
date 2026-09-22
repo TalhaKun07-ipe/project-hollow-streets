@@ -7,10 +7,10 @@
 
 ## 1. Engine & Project Configuration
 
-The project is configured via [`project.godot`](file:///c:/Users/USER/Desktop/saad%20game/Saad_Hridy/project.godot).
+The project is configured via [`project.godot`](file:///c:/Users/USER/Desktop/saad%20game/project.godot).
 
 ### Key Parameters:
-* **Engine Version:** Godot 4.7 (Config features: `["4.7", "Forward Plus"]`)
+* **Engine Version:** Godot 4.7 / 4.3 Forward+ (Config features: `["4.3", "Forward Plus"]`)
 * **Renderer:** Forward+ (Desktop high-fidelity clustering renderer supporting clustered lights, volumetric fog, and compute shaders)
 * **Main Scene:** `res://scenes/main.tscn`
 * **Viewport Size:** $1280 \times 720$
@@ -39,7 +39,7 @@ Defined in `project.godot`:
 ## 3. Physics & Collision Layers
 
 Configured 3D Physics Layers:
-* **Layer 1 (`world`):** Static world collision geometry (Ground, buildings, walls, obstacles).
+* **Layer 1 (`world`):** Static world collision geometry (Ground, roads, buildings, boundary walls, obstacles).
 * **Layer 2 (`player`):** Player character collider (`CharacterBody3D`).
 * *(Planned)* **Layer 3 (`interactable`):** Notes, items, clues, doors.
 * *(Planned)* **Layer 4 (`npc`):** Hridy / other characters.
@@ -50,54 +50,61 @@ Configured 3D Physics Layers:
 
 ### A. Player Scene (`res://scenes/player.tscn`)
 
-The player is constructed as a self-contained `CharacterBody3D` prefab.
+The player is constructed as a self-contained `CharacterBody3D` prefab:
 
-```
+```text
 Player (CharacterBody3D) [Collision Layer: 2 (player), floor_max_angle: 0.8 rad (~45°)]
- ├── CollisionShape3D (CapsuleShape3D, radius: 0.4m, height: 1.85m, y-offset: 0.925m)
- ├── SaadModel (ExtResource: assets/saad_model.glb)
- │    └── [Rigid scanned mesh of Saad, rotated 180° on Y, positioned at Y=0.99m]
- ├── SpringArm3D (Camera boom: length: 4.2m, margin: 0.25m, y-offset: 1.6m)
- │    └── Camera3D (current: true, fov: 80.9°)
- ├── Torch (Node3D, offset position: (0.42, 1.15, -0.18))
- │    ├── TorchMesh (MeshInstance3D: CylinderMesh handle)
- │    └── SpotLight3D (range: 72.4m, energy: 5.0, color: (1, 0.85, 0.55), shadows: true)
- ├── StaticBody3D [Unused empty node - candidate for cleanup]
- ├── Skeleton3D [Unused empty node - placeholder for rigged mesh]
- └── AnimationTree [Unused empty node - placeholder for skeletal animations]
+ ├── CollisionShape3D (CapsuleShape3D, radius: 0.45m, height: 2.05m, y-offset: 1.025m)
+ ├── SaadModel (Instance of res://scenes/saad_model_animated.tscn, scale: (-112, 112, -112))
+ │    ├── Skeleton3D (65-bone Mixamo humanoid rig)
+ │    │    ├── avaturn_body (MeshInstance3D, mat_saad_body.tres)
+ │    │    ├── avaturn_hair_0 (MeshInstance3D, mat_saad_hair.tres)
+ │    │    ├── avaturn_hair_1 (MeshInstance3D, mat_saad_hair.tres)
+ │    │    ├── avaturn_shoes_0 (MeshInstance3D, mat_saad_shoes.tres)
+ │    │    └── avaturn_look_0 (MeshInstance3D, mat_saad_clothes.tres)
+ │    └── AnimationPlayer (loaded with res://assets/saad_animations.tres)
+ │         ├── 'idle': 8.33s breathing/posture loop (from Idle.fbx)
+ │         ├── 'walk': 1.033s walking cycle (from Walking.fbx)
+ │         └── 'run': 1.066s sprinting cycle (from Running.fbx)
+ ├── SpringArm3D (Camera boom: length: 3.3m, margin: 0.25m, y-offset: 1.7m)
+ │    └── Camera3D (current: true, fov: 70.0°)
+ ├── Torch (Node3D, procedural position & rotation via Tween)
+ │    ├── TorchMesh (MeshInstance3D: CylinderMesh metallic flashlight handle)
+ │    └── SpotLight3D (range: 75.0m, energy: 5.2, color: (1, 0.88, 0.65), shadows: true)
+ ├── FootstepPlayer (AudioStreamPlayer3D: footsteps sounds.mp3, continuous speed-pitch modulated stream)
+ ├── LandingPlayer (AudioStreamPlayer3D: footstep_land.wav, touchdown impact)
+ └── FlashlightPlayer (AudioStreamPlayer3D: flashlight_click_on.wav & click_off.wav)
 ```
 
 ### B. Main World Scene (`res://scenes/main.tscn`)
 
-The main game environment representing the city block at night:
+The main game environment representing the mist-draped urban district:
 
-```
+```text
 Main (Node3D)
- ├── WorldEnvironment (ProceduralSkyMaterial, background_mode: 2)
- ├── DirectionalLight3D (Moonlight: angle (0.866, -0.353, 0.353), color: (0.5, 0.57, 0.84), energy: 0.45, shadows: true)
- ├── Ground (StaticBody3D)
- │    ├── MeshInstance3D (PlaneMesh 120m x 120m, StandardMaterial3D with 4K rocky terrain textures)
- │    └── CollisionShape3D (BoxShape3D: 120m x 1m x 120m, y-offset: -0.5m)
- ├── Player (Instance of res://scenes/player.tscn, initial spawn: (0, 0.1, 0))
- ├── Buildings (Node3D)
- │    ├── Building1 (StaticBody3D, pos: (-12, 6, -18), size: 8x12x8, Rust material, 3 windows)
- │    ├── Building2 (StaticBody3D, pos: (15, 6, -22), size: 8x12x8, Concrete material, 3 windows)
- │    ├── Building3 (StaticBody3D, pos: (-8, 5, 20), size: 8x12x8, Soot material)
- │    ├── Building4 (StaticBody3D, pos: (18, 7, 12), size: 8x12x8, Brick material, 2 windows)
- │    └── Building5 (StaticBody3D, pos: (-20, 5, 5), size: 8x12x8, Green concrete material)
- ├── StreetLamp1 (OmniLight3D, pos: (-5, 4.5, -8), color: cyan (0.58, 0.85, 0.95), energy: 1.8, shadows: true)
- ├── StreetLamp2 (OmniLight3D, pos: (10, 4.5, 5), color: cyan (0.64, 0.83, 0.97), energy: 1.5, shadows: true)
- ├── world light (OmniLight3D, pos: (-1.85, 21.9, 1.02), ambient fill, color: cyan (0.29, 1.0, 1.0), range: 111m)
- └── UI (CanvasLayer)
-      ├── Objective (Label: "Objective : Find Hridy", centered top, green-tinted text)
-      └── Hint (Label: "F-Torch", bottom left, orange-tinted text)
+ ├── WorldEnvironment
+ │    ├── ProceduralSkyMaterial (midnight blue sky dome)
+ │    ├── Volumetric Fog (density: 0.065, albedo: (0.55, 0.65, 0.78), ambient_inject: 0.55)
+ │    └── Distance Depth Fog (density: 0.022, light_color: (0.25, 0.32, 0.45))
+ ├── DirectionalLight3D (Moonlight: angle (0.866, -0.353, 0.353), shadows: 180m distance)
+ ├── Ground (StaticBody3D: 300m x 300m plane with rocky terrain PBR material)
+ ├── RoadNetwork (Asphalt avenue 14m wide, cross street 12m wide, 4 zebra crosswalks)
+ ├── Sidewalks (Concrete walkways, 4m wide, 0.18m raised curbs)
+ ├── StreetLamps (36 instances of res://scenes/props/street_lamp.tscn)
+ ├── Buildings (24 modular building instances across 4 blocks):
+ │    ├── BrickApartments (Instances of res://scenes/buildings/building_brick_apartment.tscn)
+ │    ├── CommercialTowers (Instances of res://scenes/buildings/building_commercial_tower.tscn)
+ │    └── CornerShops (Instances of res://scenes/buildings/building_corner_shop.tscn)
+ ├── BoundaryWalls (4 StaticBody3D collision planes at X = ±145m, Z = ±145m)
+ ├── BackgroundMusic (AudioStreamPlayer: background_music.mp3 via scripts/background_music.gd)
+ └── Player (Instance of res://scenes/player.tscn, spawn at (0, 0.1, 0))
 ```
 
 ---
 
 ## 5. Script Breakdown: `player.gd`
 
-File: [`scripts/player.gd`](file:///c:/Users/USER/Desktop/saad%20game/Saad_Hridy/scripts/player.gd)  
+File: [`scripts/player.gd`](file:///c:/Users/USER/Desktop/saad%20game/scripts/player.gd)  
 Extends: `CharacterBody3D`
 
 ### 5.1 Player State & Configuration Properties
@@ -108,61 +115,35 @@ Extends: `CharacterBody3D`
   * `jump_velocity: float = 6.2` m/s
   * `acceleration: float = 14.0` m/s²
   * `friction: float = 12.0` m/s²
-  * `gravity`: Inherited from Godot project settings (`ProjectSettings.get_setting("physics/3d/default_gravity")`, approx 9.8 m/s²).
+  * `gravity`: Inherited from Godot project settings (`physics/3d/default_gravity`, approx 9.8 m/s²).
 * **Camera & Controls:**
   * `mouse_sensitivity: float = 0.0025`
-  * `camera_distance: float = 4.2` meters
+  * `camera_distance: float = 3.3` meters
+  * `Camera3D.fov = 70.0` degrees
+* **Dynamic Body Juice:**
+  * `lean_amount: float = 0.08` (procedural turn banking into turns)
+  * `landing_squash: float = 0.12` (touchdown vertical compression recovery)
+  * `torch_sway: float = 0.03` (subtle lateral torch bobbing when walking)
 
-### 5.2 Procedural Animation Math (Handling the Rigid Unrigged Mesh)
+### 5.2 Flashlight Procedural Animation & Audio
 
-`saad_model.glb` is an unrigged 3D photogrammetry / scan mesh without bones or an internal `Skeleton3D`. Instead of gliding statically across the floor, `player.gd` implements an advanced procedural motion system:
+When the user presses `toggle_torch` (`F`):
+1. **Toggle ON:**
+   * Plays `assets/audio/flashlight_click_on.wav` on `FlashlightPlayer`.
+   * Tweens torch position smoothly from hip resting pose `(0.28, 0.85, 0.05)` to raised aim pose `(0.35, 1.25, -0.2)` in $0.22\text{s}$.
+   * Triggers micro-flicker warm-up on `SpotLight3D.light_energy` ($0 \rightarrow 3.2 \rightarrow 0.8 \rightarrow 5.2$) in $0.09\text{s}$.
+2. **Toggle OFF:**
+   * Plays `assets/audio/flashlight_click_off.wav`.
+   * Cuts light beam (`visible = false`).
+   * Tweens torch smoothly to hip resting pose in $0.26\text{s}$. The physical torch mesh remains visible clipped to Saad's hip.
 
-#### 1. Asymmetrical Footstep Bobbing
-Rather than a standard harmonic $\sin(t)$ bob (which looks floaty), the script simulates foot strikes using a sharpened non-linear curve:
-$$\text{phase} = \text{timer} \pmod{2\pi}$$
-$$\text{raw} = |\sin(\text{phase})|$$
-$$\text{footfall} = \text{raw}^{0.6}$$
-$$\text{bob\_offset} = (\text{footfall} - 0.35) \times \text{bob\_amount} \times \text{speed\_factor}$$
-* This gives a rapid drop followed by an eased upward rebound, producing the visual sensation of feet hitting the ground twice per stride.
+### 5.3 Audio Engineering: Speed-Adaptive Footsteps
 
-#### 2. Lateral Body Sway
-$$\text{sway\_offset} = \sin(\text{timer} \times 0.5) \times \text{sway\_amount} \times \text{speed\_factor}$$
-* Displaces the mesh on the local X axis at half the frequency of the vertical bob, alternating weight from left foot to right foot.
-
-#### 3. Banking / Turn Leaning
-To prevent the "statue sliding on ice" look, the model tilts into turns by calculating the local movement direction:
-```gdscript
-var local_dir := transform.basis.inverse() * move_dir
-target_lean = clampf(-local_dir.x, -1.0, 1.0) * lean_amount
-current_lean = lerpf(current_lean, target_lean, delta * 8.0)
-saad_model.rotation.z = -current_lean
-```
-
-#### 4. Forward Running Pitch
-When moving forward, the model pitches forward slightly:
-$$\text{rot}_x = \text{deg\_to\_rad}(2.5^\circ) \times \text{speed\_factor}$$
-
-#### 5. Idle Breathing Sway
-When stationary:
-$$\text{breathe} = \sin(\text{idle\_timer} \times 1.4) \times 0.012$$
-Smoothly blended with `lerpf` to simulate natural chest and shoulder elevation.
-
-#### 6. Landing Squash & Stretch
-When transitioning from airborne (`not was_on_floor`) to grounded (`is_on_floor()`):
-* A `landing_timer = 0.12` is triggered.
-* The mesh scales dynamically along $Y$ (compression) and $X, Z$ (expansion) to preserve perceived volume:
-$$\text{squash} = \sin\left(\frac{t}{0.12} \times \pi\right) \times 0.14$$
-$$\text{scale} = \text{base\_scale} \times (1.0 + 0.5 \times \text{squash},\ 1.0 - \text{squash},\ 1.0 + 0.5 \times \text{squash})$$
-
----
-
-## 6. Known Technical Debt & Optimization Items
-
-1. **Dead Nodes in `player.tscn`:**
-   * Empty `StaticBody3D`, `Skeleton3D`, and `AnimationTree` nodes should be removed or commented out until a rigged skeleton is imported.
-2. **Ground Material Reflectivity:**
-   * `metallic = 1.0` on the asphalt/rock ground in `main.tscn` creates unnatural chrome-like reflections under directional light. Needs `metallic = 0.0`.
-3. **Texture Memory Footprint:**
-   * The project currently stores uncompressed 4K PNG files (~100 MB each) in two separate directories (`textures/` and `texture/textures/`). These consume ~480 MB on disk and significant VRAM. Should be converted to VRAM-compressed WebP or 2K resolution.
-4. **Boundary Enclosure:**
-   * Ground plane is $120\text{m} \times 120\text{m}$, with a reset threshold at $Y = -15$. Invisible collision walls or street barricades should enclose the playable area.
+* Loads `res://assets/saad given assets/footsteps sounds.mp3` as a continuous looping stream.
+* When moving on ground (`is_on_floor() and current_speed > 0.6`):
+  * Fades volume up to $-2.0\text{ dB}$.
+  * Modulates pitch dynamically: `pitch_scale = lerpf(0.95, 1.35, speed_ratio)`.
+* When stopped or jumping:
+  * Smoothly fades volume to $-80\text{ dB}$ and pauses stream to avoid jarring cuts.
+* Touchdown impact:
+  * Triggers `footstep_land.wav` on independent `LandingPlayer`.

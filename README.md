@@ -51,29 +51,39 @@ git clone https://github.com/TalhaKun07-ipe/project-hollow-streets.git
 project-hollow-streets/
 ├── project.godot               # Root Godot 4 engine configuration
 ├── icon.svg                    # Game project icon
-├── scenes/
+├── scenes/                     # All scene files (.tscn)
 │   ├── main.tscn               # Main level (street environment, lighting, ground)
 │   ├── player.tscn             # CharacterBody3D player controller with camera and torch
-│   └── saad_model_animated.tscn# Animated 3D character mesh with AnimationPlayer
-├── scripts/
-│   └── player.gd               # Physics movement, procedural animation math & camera controller
-├── assets/                     # 3D models (.glb, .fbx, .obj), animations & materials
-├── textures/                   # High-fidelity PBR terrain textures (albedo, normal, roughness)
-├── texture/textures/           # PBR rock wall & building textures
-└── docs/                       # Complete project documentation
+│   ├── saad_model_animated.tscn# Animated 3D character mesh with AnimationPlayer
+│   ├── buildings/              # Modular brick apartment, commercial tower, corner shop
+│   └── props/                  # Streetlamps with volumetric lighting
+├── scripts/                    # GDScript game logic (.gd)
+│   ├── player.gd               # Physics movement, animations, audio & procedural torch
+│   └── background_music.gd     # Seamless ambient soundtrack loop controller
+├── assets/                     # 3D models, FBX animations, audio & character materials
+│   ├── audio/                  # Footstep impact & mechanical flashlight switch audio
+│   └── saad given assets/      # Continuous footsteps audio & background music track
+├── textures/                   # Photorealistic PBR architectural & road textures
+└── docs/                       # Complete project documentation suite
+    ├── PROJECT_CONTEXT_FOR_AI.md # Master onboarding brief for AI models
+    ├── FILE_MAP.md             # Complete file directory & dependency registry
     ├── ARCHITECTURE.md         # Scene trees, GDScript systems & node hierarchies
-    ├── CHARACTER_ANIMATION_GUIDE.md # Rigging, blend trees & procedural sway
+    ├── CHARACTER_ANIMATION_GUIDE.md # Rigging, Mixamo clips & animation blending
     ├── CODING_STANDARDS.md     # GDScript style guide & conventions
     ├── GAME_DESIGN.md          # Story premise, visual direction & design loop
     ├── ROADMAP.md              # Milestone tracker & upcoming features
-    └── DEVLOG.md               # Chronological updates & fix history
+    ├── DEVLOG.md               # Chronological updates & fix history
+    └── README.md               # Documentation directory index
 ```
 
 ---
 
-## 📚 Documentation
+## 📚 Documentation & AI Onboarding
 
-Detailed documentation is available in the [`docs/`](docs/) directory:
+All project documentation is organized in the [`docs/`](docs/) directory:
+
+* 🤖 **[Master AI Onboarding Brief](docs/PROJECT_CONTEXT_FOR_AI.md)**: **Hand this file to any AI assistant for instant, complete comprehension of the project!**
+* 🗺️ **[File & Architecture Map](docs/FILE_MAP.md)**: Complete registry of what every single file does and its dependencies.
 * 🏛️ **[Technical Architecture](docs/ARCHITECTURE.md)**: Scene trees, physics collision layers, and procedural math.
 * 🏃 **[Character Animation Guide](docs/CHARACTER_ANIMATION_GUIDE.md)**: AnimationPlayer setup and bone rigging.
 * 📜 **[Game Design Document](docs/GAME_DESIGN.md)**: Premise, aesthetic style, and worldbuilding.
