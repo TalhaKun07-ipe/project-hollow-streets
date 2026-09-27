@@ -51,12 +51,12 @@ func _talk() -> void:
 		gm.advance_objective(
 			8,
 			"03:15 AM — Hridy Rescued",
-			"Found Hridy safe in the courtyard alcove. The nightmare of Hollow Streets is finally over."
+			"Found Hridy safe on the top floor of the Grand Hospital. The nightmare of Hollow Streets is finally over."
 		)
 		gm.subtitle_requested.emit(
 			"Hridy",
-			"Saad! You found me! I knew you would come... thank you for saving me!",
-			4.5
+			"Saad! You found me! I was so terrified up here on the top floor in the dark... I knew you would come!",
+			5.0
 		)
 		get_tree().create_timer(3.5).timeout.connect(func():
 			if gm:

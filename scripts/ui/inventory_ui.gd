@@ -150,6 +150,11 @@ func _on_use_pressed() -> void:
 		GameManager.subtitle_requested.emit("Saad", "The brass key stamped 'Apt Courtyard'. I should find the chained gate.", 3.0)
 	elif selected_item_id == "silver_locket":
 		GameManager.subtitle_requested.emit("Saad", "Hridy's portrait is inside. 'Forever in the light — Hridy'. I won't let her down.", 3.5)
+	elif selected_item_id == "handgun":
+		var player = get_tree().root.find_child("Player", true, false)
+		if player and player.has_method("toggle_gun"):
+			player.toggle_gun()
+		close_inventory()
 
 func _on_examine_pressed() -> void:
 	if selected_item_id == "":
@@ -166,6 +171,8 @@ func _on_examine_pressed() -> void:
 		GameManager.subtitle_requested.emit("Saad", "The silver chain snapped under haste. Hridy was fleeing when she lost this.", 3.2)
 	elif selected_item_id == "health_drink":
 		GameManager.subtitle_requested.emit("Saad", "Local apothecary blend. Has an earthy, bitter fragrance.", 2.8)
+	elif selected_item_id == "handgun":
+		GameManager.subtitle_requested.emit("Saad", "A reliable 9mm semi-automatic pistol. 6-shot capacity. Equip with [1] or [G], shoot with [Left Mouse], reload with [R].", 4.0)
 
 func _play_sound(stream: AudioStream, pitch: float = 1.0) -> void:
 	if sfx_player and is_inside_tree():

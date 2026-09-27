@@ -29,6 +29,9 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory_ui.tscn" id="26_inv"]
 [ext_resource type="PackedScene" uid="uid://cjournalui001" path="res://scenes/ui/journal_ui.tscn" id="27_journal"]
 [ext_resource type="PackedScene" uid="uid://cpausemenu01" path="res://scenes/ui/pause_menu.tscn" id="28_pause"]
+[ext_resource type="PackedScene" path="res://scenes/buildings/building_hospital.tscn" id="29_hospital"]
+[ext_resource type="PackedScene" path="res://scenes/props/pickup_gun.tscn" id="30_pickup_gun"]
+[ext_resource type="PackedScene" path="res://scenes/props/pickup_ammo.tscn" id="31_pickup_ammo"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g2els"]
 sky_top_color = Color(0.08, 0.1, 0.16, 1)
@@ -541,8 +544,29 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5, 0, 13.5)
 [node name="CourtyardGate" parent="GameplayWorld" instance=ExtResource("23_gate")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 28, 0, 30)
 
+[node name="HospitalBuilding" parent="GameplayWorld" instance=ExtResource("29_hospital")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0, 52)
+
 [node name="Hridy" parent="GameplayWorld" instance=ExtResource("24_hridy")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 36, 0, 32)
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 24.5, 18.1, 59.5)
+
+[node name="PickupGun" parent="GameplayWorld" instance=ExtResource("30_pickup_gun")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.45, -30)
+
+[node name="PickupAmmo_Street" parent="GameplayWorld" instance=ExtResource("31_pickup_ammo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.15, -45)
+
+[node name="PickupAmmo_Alley" parent="GameplayWorld" instance=ExtResource("31_pickup_ammo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.15, -15)
+
+[node name="PickupAmmo_Shop" parent="GameplayWorld" instance=ExtResource("31_pickup_ammo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 0.8, 12)
+
+[node name="PickupAmmo_Hospital3F" parent="GameplayWorld" instance=ExtResource("31_pickup_ammo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 9.15, 52)
+
+[node name="PickupAmmo_Hospital4F" parent="GameplayWorld" instance=ExtResource("31_pickup_ammo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 13.65, 50)
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=585821862]
 

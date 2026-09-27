@@ -29,6 +29,10 @@ const LAND_SOUND: AudioStream = preload("res://assets/audio/footstep_land.wav")
 const JUMP_TAKEOFF_SOUND: AudioStream = preload("res://audio/sfx/jump/jump_takeoff.wav")
 const FLASHLIGHT_ON: AudioStream = preload("res://assets/audio/flashlight_click_on.wav")
 const FLASHLIGHT_OFF: AudioStream = preload("res://assets/audio/flashlight_click_off.wav")
+const GUNSHOT_SOUND: AudioStream = preload("res://audio/sfx/gun/gunshot.wav")
+const DRY_FIRE_SOUND: AudioStream = preload("res://audio/sfx/gun/dry_fire.wav")
+const RELOAD_SOUND: AudioStream = preload("res://audio/sfx/gun/reload.wav")
+const GUN_SCENE: PackedScene = preload("res://scenes/weapons/gun_model.tscn")
 
 @onready var col_shape: CollisionShape3D = get_node_or_null("CollisionShape3D")
 @onready var spring_arm: SpringArm3D = $SpringArm3D
@@ -42,6 +46,18 @@ const FLASHLIGHT_OFF: AudioStream = preload("res://assets/audio/flashlight_click
 @onready var footstep_player: AudioStreamPlayer3D = get_node_or_null("FootstepPlayer")
 @onready var landing_player: AudioStreamPlayer3D = get_node_or_null("LandingPlayer")
 @onready var flashlight_player: AudioStreamPlayer3D = get_node_or_null("FlashlightPlayer")
+
+# Weapon & Gun Combat State
+var has_gun: bool = false
+var is_gun_equipped: bool = false
+var gun_ammo_clip: int = 6
+var gun_ammo_reserve: int = 12
+const MAX_CLIP_SIZE: int = 6
+var is_shooting: bool = false
+var is_reloading: bool = false
+var shoot_cooldown: float = 0.0
+var gun_instance: Node3D = null
+var gun_sound_player: AudioStreamPlayer3D = null
 
 var torch_on: bool = true
 var current_speed: float = 0.0
@@ -126,8 +142,28 @@ func _ready() -> void:
 		anim_player.set_blend_time("jump", "walk", 0.22)
 		anim_player.set_blend_time("jump", "run", 0.22)
 		anim_player.set_blend_time("jump", "idle", 0.25)
+		anim_player.set_blend_time("gun_idle", "walk", 0.25)
+		anim_player.set_blend_time("walk", "gun_idle", 0.28)
+		anim_player.set_blend_time("gun_idle", "run", 0.22)
+		anim_player.set_blend_time("run", "gun_idle", 0.28)
+		anim_player.set_blend_time("gun_idle", "shoot", 0.05)
+		anim_player.set_blend_time("shoot", "gun_idle", 0.25)
+		anim_player.set_blend_time("walk", "shoot", 0.08)
+		anim_player.set_blend_time("shoot", "walk", 0.22)
 		if anim_player.has_animation("idle"):
 			anim_player.play("idle")
+
+	# Initialize Gun Audio Player & World Model
+	gun_sound_player = AudioStreamPlayer3D.new()
+	gun_sound_player.name = "GunAudioPlayer"
+	gun_sound_player.max_distance = 75.0
+	gun_sound_player.unit_size = 6.0
+	add_child(gun_sound_player)
+
+	gun_instance = GUN_SCENE.instantiate()
+	gun_instance.name = "GunInstance"
+	gun_instance.visible = false
+	add_child(gun_instance)
 
 	# Find UI controllers in scene
 	inventory_ui = get_tree().root.find_child("InventoryUI", true, false)
@@ -218,6 +254,23 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_torch"):
 		torch_on = not torch_on
 		_toggle_flashlight(torch_on)
+
+	# Gun equip / holster toggle: [1] or [G]
+	if event.is_action_pressed("equip_gun") or (event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_1 or event.keycode == KEY_G or event.physical_keycode == KEY_1 or event.physical_keycode == KEY_G)):
+		toggle_gun()
+		return
+
+	# Gun reload: [R]
+	if event.is_action_pressed("reload") or (event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_R or event.physical_keycode == KEY_R)):
+		reload_gun()
+		return
+
+	# Gun shooting: Left Mouse Button
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if is_gun_equipped and not is_menu_open and not is_cutscene_active:
+			fire_gun()
+			get_viewport().set_input_as_handled()
+			return
 
 	if event.is_action_pressed("crouch") or (event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_C or event.physical_keycode == KEY_C or event.keycode == KEY_CTRL or event.physical_keycode == KEY_CTRL)):
 		_toggle_crouch()
@@ -423,18 +476,39 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-	# Anchor torch directly to Saad's right hand bone
-	if torch and torch.is_inside_tree():
+	# Weapon / Torch positioning
+	if shoot_cooldown > 0.0:
+		shoot_cooldown -= delta
+		if shoot_cooldown <= 0.0:
+			is_shooting = false
+
+	if is_gun_equipped and gun_instance:
+		gun_instance.visible = true
 		if hand_attachment:
-			torch.global_position = hand_attachment.global_position
-		if torch_on:
-			var aim_target := torch.global_position - transform.basis.z * 15.0 + Vector3(0.0, -1.0, 0.0)
-			torch.look_at(aim_target, Vector3.UP)
-		else:
-			var rest_target := torch.global_position + Vector3(0.0, -1.0, 0.0) - transform.basis.z * 0.2
-			var fwd := (rest_target - torch.global_position).normalized()
-			var up_vec := -transform.basis.z if abs(fwd.dot(Vector3.UP)) > 0.9 else Vector3.UP
-			torch.look_at(rest_target, up_vec)
+			gun_instance.global_position = hand_attachment.global_position + transform.basis.x * 0.02 + Vector3(0.0, -0.02, 0.0)
+			var aim_fwd := -camera.global_transform.basis.z if camera else -transform.basis.z
+			var aim_target := gun_instance.global_position + aim_fwd * 15.0
+			gun_instance.look_at(aim_target, Vector3.UP)
+		# When gun is equipped, move torch to chest/shoulder lantern mount
+		if torch and torch.is_inside_tree():
+			torch.global_position = global_position + Vector3(0.0, 1.35, 0.0) - transform.basis.x * 0.22 - transform.basis.z * 0.1
+			if torch_on:
+				var aim_target := torch.global_position - transform.basis.z * 15.0
+				torch.look_at(aim_target, Vector3.UP)
+	else:
+		if gun_instance:
+			gun_instance.visible = false
+		if torch and torch.is_inside_tree():
+			if hand_attachment:
+				torch.global_position = hand_attachment.global_position
+			if torch_on:
+				var aim_target := torch.global_position - transform.basis.z * 15.0 + Vector3(0.0, -1.0, 0.0)
+				torch.look_at(aim_target, Vector3.UP)
+			else:
+				var rest_target := torch.global_position + Vector3(0.0, -1.0, 0.0) - transform.basis.z * 0.2
+				var fwd := (rest_target - torch.global_position).normalized()
+				var up_vec := -transform.basis.z if abs(fwd.dot(Vector3.UP)) > 0.9 else Vector3.UP
+				torch.look_at(rest_target, up_vec)
 
 	# Safety fallback if falling below world
 	if global_position.y < -15.0:
@@ -465,6 +539,26 @@ func _update_animation(delta: float, move_dir: Vector3) -> void:
 				anim_player.speed_scale = 1.0
 			elif anim_player.current_animation != "":
 				anim_player.speed_scale = 0.5
+		elif is_gun_equipped:
+			if is_shooting:
+				if anim_player.has_animation("shoot") and anim_player.current_animation != "shoot":
+					anim_player.play("shoot", 0.05)
+				anim_player.speed_scale = 1.0
+			elif current_speed > 5.0:
+				if anim_player.current_animation != "run":
+					anim_player.play("run", 0.22)
+				anim_player.speed_scale = clampf(current_speed / run_speed, 0.85, 1.25)
+			elif current_speed > 0.2:
+				if anim_player.current_animation != "walk":
+					anim_player.play("walk", 0.28)
+				anim_player.speed_scale = clampf(current_speed / walk_speed, 0.8, 1.25)
+			else:
+				if anim_player.has_animation("gun_idle"):
+					if anim_player.current_animation != "gun_idle":
+						anim_player.play("gun_idle", 0.28)
+				elif anim_player.current_animation != "idle":
+					anim_player.play("idle", 0.30)
+				anim_player.speed_scale = 1.0
 		elif current_speed > 5.0:
 			if anim_player.current_animation != "run":
 				anim_player.play("run", 0.22)
@@ -523,3 +617,110 @@ func _end_opening_cutscene() -> void:
 	var t := create_tween()
 	t.tween_property(spring_arm, "spring_length", camera_distance, 1.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+# --- Weapon System APIs ---
+
+func unlock_gun() -> void:
+	has_gun = true
+	is_gun_equipped = true
+	_update_weapon_hud()
+
+func toggle_gun() -> void:
+	if not has_gun:
+		return
+	is_gun_equipped = not is_gun_equipped
+	_update_weapon_hud()
+
+func add_ammo(amount: int) -> void:
+	gun_ammo_reserve += amount
+	_update_weapon_hud()
+
+func _update_weapon_hud() -> void:
+	if not hud_node:
+		hud_node = get_tree().root.find_child("ObjectiveHUD", true, false)
+	if hud_node and hud_node.has_method("update_weapon_hud"):
+		hud_node.update_weapon_hud(is_gun_equipped, gun_ammo_clip, gun_ammo_reserve)
+
+func fire_gun() -> void:
+	if not is_gun_equipped or is_reloading or shoot_cooldown > 0.0:
+		return
+	
+	if gun_ammo_clip <= 0:
+		if gun_sound_player and is_inside_tree():
+			gun_sound_player.stream = DRY_FIRE_SOUND
+			gun_sound_player.pitch_scale = randf_range(0.96, 1.04)
+			gun_sound_player.play()
+		if hud_node and hud_node.has_method("show_notification"):
+			hud_node.show_notification("WEAPON EMPTY", "Press [R] to Reload")
+		return
+	
+	gun_ammo_clip -= 1
+	shoot_cooldown = 0.35
+	is_shooting = true
+	
+	if gun_sound_player and is_inside_tree():
+		gun_sound_player.stream = GUNSHOT_SOUND
+		gun_sound_player.pitch_scale = randf_range(0.95, 1.05)
+		gun_sound_player.play()
+	
+	if gun_instance and gun_instance.has_method("flash_muzzle"):
+		gun_instance.flash_muzzle()
+	
+	if anim_player and anim_player.has_animation("shoot"):
+		anim_player.stop()
+		anim_player.play("shoot", 0.05)
+	
+	if spring_arm:
+		spring_arm.rotation.x = clamp(spring_arm.rotation.x + deg_to_rad(1.8), deg_to_rad(-55.0), deg_to_rad(30.0))
+	
+	_perform_gun_raycast()
+	_update_weapon_hud()
+
+func _perform_gun_raycast() -> void:
+	var space_state := get_world_3d().direct_space_state
+	if not space_state:
+		return
+	var origin := camera.global_position if camera else global_position + Vector3(0, 1.5, 0)
+	var forward := -camera.global_transform.basis.z if camera else -transform.basis.z
+	var ray_end := origin + forward * 80.0
+	var query := PhysicsRayQueryParameters3D.create(origin, ray_end, 1)
+	query.exclude = [get_rid()]
+	var result := space_state.intersect_ray(query)
+	if not result.is_empty():
+		var hit_pos: Vector3 = result.position
+		_spawn_hit_spark(hit_pos, result.normal)
+
+func _spawn_hit_spark(pos: Vector3, normal: Vector3) -> void:
+	var spark := OmniLight3D.new()
+	spark.light_color = Color(1.0, 0.7, 0.3)
+	spark.light_energy = 5.0
+	spark.omni_range = 3.0
+	get_parent().add_child(spark)
+	spark.global_position = pos + normal * 0.05
+	var tw := spark.create_tween()
+	tw.tween_property(spark, "light_energy", 0.0, 0.08)
+	tw.tween_callback(spark.queue_free)
+
+func reload_gun() -> void:
+	if not is_gun_equipped or is_reloading or gun_ammo_clip >= MAX_CLIP_SIZE or gun_ammo_reserve <= 0:
+		return
+	
+	is_reloading = true
+	if gun_sound_player and is_inside_tree():
+		gun_sound_player.stream = RELOAD_SOUND
+		gun_sound_player.pitch_scale = randf_range(0.97, 1.03)
+		gun_sound_player.play()
+	
+	if hud_node and hud_node.has_method("show_notification"):
+		hud_node.show_notification("RELOADING", "9mm Service Handgun")
+	
+	var tw := create_tween()
+	tw.tween_interval(1.1)
+	tw.tween_callback(func():
+		var needed := MAX_CLIP_SIZE - gun_ammo_clip
+		var to_load := mini(needed, gun_ammo_reserve)
+		gun_ammo_clip += to_load
+		gun_ammo_reserve -= to_load
+		is_reloading = false
+		_update_weapon_hud()
+	)

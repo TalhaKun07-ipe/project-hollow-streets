@@ -58,14 +58,14 @@ var objectives: Array[Dictionary] = [
 	},
 	{
 		"id": "stage_7",
-		"title": "Rescue Hridy",
-		"desc": "Enter the secluded apartment courtyard and locate Hridy before the darkness closes in.",
+		"title": "Search the Grand Hospital",
+		"desc": "Enter the 5-story Grand Hospital through the opened courtyard gate. Climb to the 5th floor top room to find Hridy.",
 		"completed": false
 	},
 	{
 		"id": "stage_8",
 		"title": "Reunion in Hollow Streets",
-		"desc": "You found Hridy safe! Saad and Hridy have reunited in the misty streets.",
+		"desc": "You found Hridy safe on the 5th floor! Saad and Hridy have reunited in the misty streets.",
 		"completed": false
 	}
 ]

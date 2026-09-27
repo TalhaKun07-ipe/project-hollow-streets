@@ -25,6 +25,9 @@ extends Control
 @onready var sfx_player: AudioStreamPlayer = $SFXPlayer
 
 @onready var type_tick_player: AudioStreamPlayer = get_node_or_null("TypeTickPlayer")
+@onready var weapon_panel: Panel = get_node_or_null("WeaponPanel")
+@onready var weapon_label: Label = get_node_or_null("WeaponPanel/WeaponLabel")
+@onready var ammo_label: Label = get_node_or_null("WeaponPanel/AmmoLabel")
 
 const SOUND_NOTIF: AudioStream = preload("res://assets/audio/flashlight_click_on.wav")
 const SOUND_PICKUP: AudioStream = preload("res://assets/audio/footstep_land.wav")
@@ -68,9 +71,21 @@ func _refresh_objective() -> void:
 	objective_title_lbl.text = cur.get("title", "Find Hridy").to_upper()
 	objective_desc_lbl.text = cur.get("desc", "")
 
+func update_weapon_hud(equipped: bool, clip: int, reserve: int) -> void:
+	if not weapon_panel:
+		weapon_panel = get_node_or_null("WeaponPanel")
+	if not weapon_panel:
+		return
+	weapon_panel.visible = equipped
+	if equipped and ammo_label:
+		ammo_label.text = "%d / %d" % [clip, reserve]
+
 func _on_objective_updated(_index: int, title: String, desc: String) -> void:
 	_refresh_objective()
 	_show_notification("OBJECTIVE UPDATED", title)
+
+func show_notification(header: String, text: String) -> void:
+	_show_notification(header, text)
 
 func _show_notification(header: String, text: String) -> void:
 	notif_title_lbl.text = header + ": " + text.to_upper()

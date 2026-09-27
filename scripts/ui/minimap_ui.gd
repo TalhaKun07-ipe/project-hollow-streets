@@ -27,9 +27,27 @@ var objective_positions: Dictionary = {
 	4: {"pos": Vector2(-22.0, -65.0), "name": "Alley Power Breaker"},
 	5: {"pos": Vector2(18.5, 13.5), "name": "East Corner Shop (Key)"},
 	6: {"pos": Vector2(28.0, 30.0), "name": "Apartment Courtyard Gate"},
-	7: {"pos": Vector2(36.0, 32.0), "name": "Hridy in Courtyard"},
-	8: {"pos": Vector2(36.0, 32.0), "name": "Hridy Rescued!"}
+	7: {"pos": Vector2(34.0, 52.0), "name": "Grand Hospital (Floor 5)"},
+	8: {"pos": Vector2(34.0, 52.0), "name": "Hridy Rescued!"}
 }
+
+# Dynamic item markers (weapons, ammo pickups, etc.)
+var item_markers: Dictionary = {}
+
+func register_item_marker(id: String, world_pos: Vector3, label: String, color: Color = Color(1.0, 0.85, 0.2)) -> void:
+	item_markers[id] = {
+		"pos": Vector2(world_pos.x, world_pos.z),
+		"label": label,
+		"color": color
+	}
+	if map_canvas:
+		map_canvas.queue_redraw()
+
+func unregister_item_marker(id: String) -> void:
+	if item_markers.has(id):
+		item_markers.erase(id)
+		if map_canvas:
+			map_canvas.queue_redraw()
 
 func _ready() -> void:
 	map_canvas.draw.connect(_on_map_draw)
@@ -157,7 +175,42 @@ func _on_map_draw() -> void:
 	map_canvas.draw_rect(Rect2(ap1_pos.x - 8 * scale_factor, ap1_pos.y - 6 * scale_factor, 16 * scale_factor, 12 * scale_factor), bld_color)
 	var ap2_pos := center + Vector2(19.0 - px, 42.0 - pz) * scale_factor
 	map_canvas.draw_rect(Rect2(ap2_pos.x - 6 * scale_factor, ap2_pos.y - 8 * scale_factor, 12 * scale_factor, 16 * scale_factor), bld_color)
+
+	# Grand Hospital building at (34, 52), size 26m x 22m
+	var hosp_pos := center + Vector2(34.0 - px, 52.0 - pz) * scale_factor
+	var hosp_rect := Rect2(hosp_pos.x - 13.0 * scale_factor, hosp_pos.y - 11.0 * scale_factor, 26.0 * scale_factor, 22.0 * scale_factor)
+	map_canvas.draw_rect(hosp_rect, Color(0.25, 0.35, 0.45, 0.45))
+	map_canvas.draw_rect(hosp_rect, Color(0.4, 0.7, 0.9, 0.6), false, 1.5)
 	
+	# Draw dynamic item markers (guns, ammo pickups, etc.)
+	var font = ThemeDB.fallback_font
+	for m_id in item_markers:
+		var item: Dictionary = item_markers[m_id]
+		var item_pos: Vector2 = item["pos"]
+		var rel_pos := (item_pos - Vector2(px, pz)) * scale_factor
+		var marker_scr := center + rel_pos
+		var dist_to_center := (marker_scr - center).length()
+		var clamped := false
+		if dist_to_center > radius - 6.0:
+			marker_scr = center + (marker_scr - center).normalized() * (radius - 6.0)
+			clamped = true
+		
+		var col: Color = item.get("color", Color(1.0, 0.85, 0.2))
+		var is_gun: bool = "gun" in str(item.get("label", "")).to_lower()
+		
+		# Draw pulsing outer ring
+		var pulse := (sin(pulse_time * 2.0) * 0.5 + 0.5)
+		var marker_radius: float = 6.0 if is_gun else 4.0
+		map_canvas.draw_circle(marker_scr, marker_radius + (pulse * 3.0), Color(col.r, col.g, col.b, 0.35 * (1.0 - pulse * 0.5)))
+		# Draw marker core
+		map_canvas.draw_circle(marker_scr, marker_radius, col)
+		map_canvas.draw_arc(marker_scr, marker_radius, 0, TAU, 12, Color.WHITE, 1.2)
+		
+		# Draw label if unclamped
+		if not clamped and dist_to_center < radius * 0.85 and font:
+			var lbl: String = item.get("label", "")
+			map_canvas.draw_string(font, marker_scr + Vector2(-30, -8), lbl, HORIZONTAL_ALIGNMENT_CENTER, 60, 9, Color(1, 1, 1, 0.9))
+
 	# Compass crosshairs
 	map_canvas.draw_line(Vector2(center.x, center.y - radius), Vector2(center.x, center.y + radius), Color(0.4, 0.35, 0.35, 0.25), 1.0)
 	map_canvas.draw_line(Vector2(center.x - radius, center.y), Vector2(center.x + radius, center.y), Color(0.4, 0.35, 0.35, 0.25), 1.0)
