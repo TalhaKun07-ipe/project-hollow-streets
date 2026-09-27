@@ -32,6 +32,8 @@ const FLASHLIGHT_OFF: AudioStream = preload("res://assets/audio/flashlight_click
 const GUNSHOT_SOUND: AudioStream = preload("res://audio/sfx/gun/gunshot.wav")
 const DRY_FIRE_SOUND: AudioStream = preload("res://audio/sfx/gun/dry_fire.wav")
 const RELOAD_SOUND: AudioStream = preload("res://audio/sfx/gun/reload.wav")
+const HURT_SOUND: AudioStream = preload("res://audio/sfx/player_hurt.wav")
+const DEATH_SOUND: AudioStream = preload("res://audio/sfx/player_death.wav")
 const GUN_SCENE: PackedScene = preload("res://scenes/weapons/gun_model.tscn")
 
 @onready var col_shape: CollisionShape3D = get_node_or_null("CollisionShape3D")
@@ -47,9 +49,16 @@ const GUN_SCENE: PackedScene = preload("res://scenes/weapons/gun_model.tscn")
 @onready var landing_player: AudioStreamPlayer3D = get_node_or_null("LandingPlayer")
 @onready var flashlight_player: AudioStreamPlayer3D = get_node_or_null("FlashlightPlayer")
 
+# Health & Survival State
+var max_health: float = 100.0
+var current_health: float = 100.0
+var is_dead: bool = false
+var hurt_sound_player: AudioStreamPlayer3D = null
+
 # Weapon & Gun Combat State
 var has_gun: bool = false
 var is_gun_equipped: bool = false
+var is_drawing_gun: bool = false
 var gun_ammo_clip: int = 6
 var gun_ammo_reserve: int = 12
 const MAX_CLIP_SIZE: int = 6
@@ -58,6 +67,15 @@ var is_reloading: bool = false
 var shoot_cooldown: float = 0.0
 var gun_instance: Node3D = null
 var gun_sound_player: AudioStreamPlayer3D = null
+
+# Resident Evil Remake Style Aiming / Shoulder Camera
+const NORMAL_FOV: float = 70.0
+const ZOOM_FOV: float = 54.0
+const NORMAL_CAM_DIST: float = 3.3
+const ZOOM_CAM_DIST: float = 1.75
+const ZOOM_CAM_OFFSET_X: float = 0.45
+var is_aiming: bool = false
+var aim_zoom_timer: float = 0.0
 
 var torch_on: bool = true
 var current_speed: float = 0.0
@@ -149,7 +167,10 @@ func _ready() -> void:
 		anim_player.set_blend_time("gun_idle", "shoot", 0.05)
 		anim_player.set_blend_time("shoot", "gun_idle", 0.25)
 		anim_player.set_blend_time("walk", "shoot", 0.08)
-		anim_player.set_blend_time("shoot", "walk", 0.22)
+		anim_player.set_blend_time("shoot", "walk", 0.18)
+		anim_player.set_blend_time("idle", "draw_gun", 0.15)
+		anim_player.set_blend_time("draw_gun", "gun_idle", 0.22)
+		anim_player.set_blend_time("draw_gun", "walk", 0.2)
 		if anim_player.has_animation("idle"):
 			anim_player.play("idle")
 
@@ -160,10 +181,17 @@ func _ready() -> void:
 	gun_sound_player.unit_size = 6.0
 	add_child(gun_sound_player)
 
+	hurt_sound_player = AudioStreamPlayer3D.new()
+	hurt_sound_player.name = "HurtAudioPlayer"
+	hurt_sound_player.max_distance = 35.0
+	add_child(hurt_sound_player)
+
 	gun_instance = GUN_SCENE.instantiate()
 	gun_instance.name = "GunInstance"
 	gun_instance.visible = false
 	add_child(gun_instance)
+
+	_update_health_hud(false)
 
 	# Find UI controllers in scene
 	inventory_ui = get_tree().root.find_child("InventoryUI", true, false)
@@ -343,6 +371,23 @@ func _toggle_flashlight(enable: bool) -> void:
 			torch_light.visible = false
 
 func _physics_process(delta: float) -> void:
+	if is_dead:
+		velocity.x = move_toward(velocity.x, 0.0, 10.0 * delta)
+		velocity.z = move_toward(velocity.z, 0.0, 10.0 * delta)
+		if not is_on_floor():
+			velocity.y -= gravity * delta
+		move_and_slide()
+		return
+
+	# Resident Evil Remake Aiming Input
+	var aim_input := not is_menu_open and is_gun_equipped and (Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) or is_shooting or shoot_cooldown > 0.0)
+	if is_shooting or shoot_cooldown > 0.0:
+		aim_zoom_timer = 0.45
+	elif aim_zoom_timer > 0.0:
+		aim_zoom_timer -= delta
+	
+	is_aiming = aim_input or aim_zoom_timer > 0.0
+
 	# Gravity
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -374,14 +419,15 @@ func _physics_process(delta: float) -> void:
 		else:
 			is_crouching = true
 
-		# Sprint or stand-up from sprint
-		var sprint_requested := not is_menu_open and Input.is_key_pressed(KEY_SHIFT)
+		# Sprint or stand-up from sprint (If shooting, throttle sprint to walk speed)
+		var is_weapon_firing := is_shooting or shoot_cooldown > 0.0
+		var sprint_requested := not is_menu_open and Input.is_key_pressed(KEY_SHIFT) and not is_weapon_firing
 		if sprint_requested and is_crouching and not _is_ceiling_blocked():
 			is_crouch_toggled = false
 			is_crouching = false
 
 		# Jump or stand up from crouch
-		if not is_menu_open and Input.is_action_just_pressed("jump") and is_on_floor():
+		if not is_menu_open and Input.is_action_just_pressed("jump") and is_on_floor() and not is_weapon_firing:
 			if is_crouching:
 				if not _is_ceiling_blocked():
 					is_crouch_toggled = false
@@ -408,6 +454,8 @@ func _physics_process(delta: float) -> void:
 			target_speed = crouch_speed
 		elif sprint_requested:
 			target_speed = run_speed
+		else:
+			target_speed = walk_speed
 
 		if direction != Vector3.ZERO:
 			current_speed = move_toward(current_speed, target_speed, acceleration * delta)
@@ -516,9 +564,24 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector3.ZERO
 
 	_update_animation(delta, effective_dir)
-	if spring_arm and not is_cutscene_active:
-		var target_cam_dist := crouch_camera_distance if is_crouching else camera_distance
+
+	# Resident Evil Remake camera zoom & shoulder offset
+	if spring_arm and not is_cutscene_active and not is_dead:
+		var target_cam_dist := camera_distance
+		var target_cam_fov := NORMAL_FOV
+		var target_cam_offset_x := 0.0
+
+		if is_aiming:
+			target_cam_dist = ZOOM_CAM_DIST
+			target_cam_fov = ZOOM_FOV
+			target_cam_offset_x = ZOOM_CAM_OFFSET_X
+		elif is_crouching:
+			target_cam_dist = crouch_camera_distance
+
 		spring_arm.spring_length = lerpf(spring_arm.spring_length, target_cam_dist, 8.0 * delta)
+		spring_arm.position.x = lerpf(spring_arm.position.x, target_cam_offset_x, 8.0 * delta)
+		if camera:
+			camera.fov = lerpf(camera.fov, target_cam_fov, 8.0 * delta)
 
 func _update_animation(delta: float, move_dir: Vector3) -> void:
 	# --- Skeletal Animation Playback ---
@@ -540,9 +603,23 @@ func _update_animation(delta: float, move_dir: Vector3) -> void:
 			elif anim_player.current_animation != "":
 				anim_player.speed_scale = 0.5
 		elif is_gun_equipped:
-			if is_shooting or (anim_player.current_animation == "shoot" and anim_player.is_playing() and current_speed <= 0.2):
-				if anim_player.has_animation("shoot") and anim_player.current_animation != "shoot":
-					anim_player.play("shoot", 0.05, 1.35)
+			if is_drawing_gun:
+				if anim_player.current_animation == "draw_gun" and anim_player.is_playing():
+					return
+				else:
+					is_drawing_gun = false
+			
+			# Walk and shoot animation blending without sliding
+			if is_shooting or shoot_cooldown > 0.0:
+				if current_speed > 0.2:
+					# Smoothly blend into walking motion so legs do not freeze/slide while firing
+					if anim_player.current_animation != "walk":
+						anim_player.play("walk", 0.12)
+					anim_player.speed_scale = clampf(current_speed / walk_speed, 0.85, 1.25)
+				else:
+					if anim_player.has_animation("shoot") and anim_player.current_animation != "shoot":
+						anim_player.play("shoot", 0.05, 1.35)
+					anim_player.speed_scale = 1.0
 			elif current_speed > 5.0:
 				if anim_player.current_animation != "run":
 					anim_player.play("run", 0.22)
@@ -622,15 +699,26 @@ func _end_opening_cutscene() -> void:
 func unlock_gun() -> void:
 	has_gun = true
 	is_gun_equipped = true
+	_play_draw_gun()
 	_update_weapon_hud()
 	if hud_node and hud_node.has_method("show_notification"):
-		hud_node.show_notification("9MM HANDGUN EQUIPPED", "[LMB] Shoot | [R] Reload | [1/G] Holster")
+		hud_node.show_notification("9MM HANDGUN EQUIPPED", "[LMB] Shoot | [RMB] Aim | [R] Reload | [1/G] Holster")
 
 func toggle_gun() -> void:
-	if not has_gun:
+	if not has_gun or is_dead:
 		return
 	is_gun_equipped = not is_gun_equipped
+	if is_gun_equipped:
+		_play_draw_gun()
+	else:
+		is_drawing_gun = false
 	_update_weapon_hud()
+
+func _play_draw_gun() -> void:
+	if anim_player and anim_player.has_animation("draw_gun"):
+		is_drawing_gun = true
+		anim_player.stop()
+		anim_player.play("draw_gun", 0.15, 1.4)
 
 func add_ammo(amount: int) -> void:
 	gun_ammo_reserve += amount
@@ -643,7 +731,7 @@ func _update_weapon_hud() -> void:
 		hud_node.update_weapon_hud(is_gun_equipped, gun_ammo_clip, gun_ammo_reserve)
 
 func fire_gun() -> void:
-	if not is_gun_equipped or is_reloading or shoot_cooldown > 0.0:
+	if not is_gun_equipped or is_reloading or shoot_cooldown > 0.0 or is_dead:
 		return
 	
 	if gun_ammo_clip <= 0:
@@ -656,8 +744,9 @@ func fire_gun() -> void:
 		return
 	
 	gun_ammo_clip -= 1
-	shoot_cooldown = 0.42
+	shoot_cooldown = 0.38
 	is_shooting = true
+	aim_zoom_timer = 0.45
 	
 	if gun_sound_player and is_inside_tree():
 		gun_sound_player.stream = GUNSHOT_SOUND
@@ -667,9 +756,10 @@ func fire_gun() -> void:
 	if gun_instance and gun_instance.has_method("flash_muzzle"):
 		gun_instance.flash_muzzle()
 	
-	if anim_player and anim_player.has_animation("shoot"):
+	# Only lock full-body shoot anim if stationary, otherwise smoothly walk-and-shoot
+	if current_speed <= 0.2 and anim_player and anim_player.has_animation("shoot"):
 		anim_player.stop()
-		anim_player.play("shoot", 0.05, 1.35)
+		anim_player.play("shoot", 0.04, 1.4)
 	
 	if spring_arm:
 		spring_arm.rotation.x = clamp(spring_arm.rotation.x + deg_to_rad(1.8), deg_to_rad(-55.0), deg_to_rad(30.0))
@@ -684,11 +774,15 @@ func _perform_gun_raycast() -> void:
 	var origin := camera.global_position if camera else global_position + Vector3(0, 1.5, 0)
 	var forward := -camera.global_transform.basis.z if camera else -transform.basis.z
 	var ray_end := origin + forward * 80.0
-	var query := PhysicsRayQueryParameters3D.create(origin, ray_end, 1)
+	# Raycast against layer 1 (world) and layer 4 (zombies) -> mask = 1 | 4 = 5
+	var query := PhysicsRayQueryParameters3D.create(origin, ray_end, 5)
 	query.exclude = [get_rid()]
 	var result := space_state.intersect_ray(query)
 	if not result.is_empty():
 		var hit_pos: Vector3 = result.position
+		var hit_collider: Object = result.collider
+		if hit_collider and hit_collider.has_method("take_damage"):
+			hit_collider.take_damage(30.0, hit_pos, result.normal)
 		_spawn_hit_spark(hit_pos, result.normal)
 
 func _spawn_hit_spark(pos: Vector3, normal: Vector3) -> void:
@@ -703,7 +797,7 @@ func _spawn_hit_spark(pos: Vector3, normal: Vector3) -> void:
 	tw.tween_callback(spark.queue_free)
 
 func reload_gun() -> void:
-	if not is_gun_equipped or is_reloading or gun_ammo_clip >= MAX_CLIP_SIZE or gun_ammo_reserve <= 0:
+	if not is_gun_equipped or is_reloading or gun_ammo_clip >= MAX_CLIP_SIZE or gun_ammo_reserve <= 0 or is_dead:
 		return
 	
 	is_reloading = true
@@ -725,3 +819,58 @@ func reload_gun() -> void:
 		is_reloading = false
 		_update_weapon_hud()
 	)
+
+# --- Health, Damage & Survival APIs ---
+
+func take_damage(amount: float) -> void:
+	if is_dead or is_cutscene_active:
+		return
+	
+	current_health = maxf(0.0, current_health - amount)
+	
+	if hurt_sound_player and is_inside_tree():
+		hurt_sound_player.stream = HURT_SOUND
+		hurt_sound_player.pitch_scale = randf_range(0.95, 1.05)
+		hurt_sound_player.play()
+	
+	# Visceral camera kick
+	if spring_arm:
+		spring_arm.rotation.x += deg_to_rad(randf_range(-2.5, 2.5))
+		spring_arm.rotation.y += deg_to_rad(randf_range(-2.0, 2.0))
+	
+	_update_health_hud(true)
+	
+	if current_health <= 0.0:
+		_die()
+
+func _die() -> void:
+	if is_dead:
+		return
+	is_dead = true
+	velocity = Vector3.ZERO
+	
+	if hurt_sound_player and is_inside_tree():
+		hurt_sound_player.stream = DEATH_SOUND
+		hurt_sound_player.pitch_scale = 1.0
+		hurt_sound_player.play()
+	
+	if anim_player:
+		anim_player.pause()
+	
+	var t := create_tween()
+	t.set_parallel(true)
+	t.tween_property(self, "rotation:x", deg_to_rad(-80.0), 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	t.tween_property(self, "position:y", position.y - 0.7, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	t.set_parallel(false)
+	t.tween_callback(func():
+		if hud_node and hud_node.has_method("show_death_screen"):
+			hud_node.show_death_screen()
+	)
+
+func _update_health_hud(was_damaged: bool = false) -> void:
+	if not hud_node and is_inside_tree() and get_tree():
+		hud_node = get_tree().root.find_child("ObjectiveHUD", true, false)
+	if hud_node and hud_node.has_method("update_player_health"):
+		hud_node.update_player_health(current_health, max_health, was_damaged)
+
+

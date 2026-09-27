@@ -30,6 +30,14 @@ extends Control
 @onready var ammo_label: Label = get_node_or_null("WeaponPanel/AmmoLabel")
 @onready var crosshair: Control = get_node_or_null("Crosshair")
 
+@onready var damage_overlay: ColorRect = get_node_or_null("DamageDarkeningOverlay")
+@onready var health_panel: Panel = get_node_or_null("HealthPanel")
+@onready var health_value_lbl: Label = get_node_or_null("HealthPanel/Margin/VBox/HeaderBox/VitalityValue")
+@onready var health_progress_bar: ProgressBar = get_node_or_null("HealthPanel/Margin/VBox/HealthProgressBar")
+@onready var death_screen: Panel = get_node_or_null("DeathScreen")
+@onready var respawn_btn: Button = get_node_or_null("DeathScreen/VBox/BtnBox/RespawnBtn")
+@onready var death_main_menu_btn: Button = get_node_or_null("DeathScreen/VBox/BtnBox/DeathMainMenuBtn")
+
 const SOUND_NOTIF: AudioStream = preload("res://assets/audio/flashlight_click_on.wav")
 const SOUND_PICKUP: AudioStream = preload("res://assets/audio/footstep_land.wav")
 const SOUND_TYPE_TICK: AudioStream = preload("res://assets/audio/text_tick.wav")
@@ -37,6 +45,7 @@ const SOUND_TYPE_TICK: AudioStream = preload("res://assets/audio/text_tick.wav")
 var subtitle_tween: Tween = null
 var notif_tween: Tween = null
 var cutscene_tween: Tween = null
+var dark_overlay_tween: Tween = null
 var current_prompt_target: Node = null
 var current_typing_id: int = 0
 var is_typing_subtitle: bool = false
@@ -53,6 +62,8 @@ func _ready() -> void:
 	interact_panel.modulate.a = 0.0
 	if victory_panel:
 		victory_panel.visible = false
+	if death_screen:
+		death_screen.visible = false
 	
 	GameManager.objective_updated.connect(_on_objective_updated)
 	GameManager.subtitle_requested.connect(_show_subtitle)
@@ -64,8 +75,15 @@ func _ready() -> void:
 	if main_menu_btn:
 		main_menu_btn.pressed.connect(_on_main_menu_pressed)
 		main_menu_btn.mouse_entered.connect(func(): _play_sound(SOUND_NOTIF, 1.2))
+	if respawn_btn:
+		respawn_btn.pressed.connect(_on_respawn_pressed)
+		respawn_btn.mouse_entered.connect(func(): _play_sound(SOUND_NOTIF, 1.2))
+	if death_main_menu_btn:
+		death_main_menu_btn.pressed.connect(_on_main_menu_pressed)
+		death_main_menu_btn.mouse_entered.connect(func(): _play_sound(SOUND_NOTIF, 1.2))
 	
 	_refresh_objective()
+
 
 func _refresh_objective() -> void:
 	var cur := GameManager.get_current_objective()
@@ -84,6 +102,69 @@ func update_weapon_hud(equipped: bool, clip: int, reserve: int) -> void:
 	weapon_panel.visible = equipped
 	if equipped and ammo_label:
 		ammo_label.text = "%d / %d" % [clip, reserve]
+
+func update_player_health(current_hp: float, max_hp: float, was_damaged: bool = false) -> void:
+	if not health_progress_bar:
+		health_progress_bar = get_node_or_null("HealthPanel/Margin/VBox/HealthProgressBar")
+	if not health_value_lbl:
+		health_value_lbl = get_node_or_null("HealthPanel/Margin/VBox/HeaderBox/VitalityValue")
+	if not damage_overlay:
+		damage_overlay = get_node_or_null("DamageDarkeningOverlay")
+	
+	if health_progress_bar:
+		health_progress_bar.max_value = max_hp
+		health_progress_bar.value = current_hp
+		
+		# Color coding: Green -> Amber -> Crimson
+		var ratio := clampf(current_hp / max_hp, 0.0, 1.0)
+		var fill_style := health_progress_bar.get_theme_stylebox("fill")
+		if fill_style and fill_style is StyleBoxFlat:
+			var flat := fill_style as StyleBoxFlat
+			if ratio > 0.5:
+				flat.bg_color = Color(0.2, 0.82, 0.45, 0.95)
+			elif ratio > 0.25:
+				flat.bg_color = Color(0.92, 0.65, 0.15, 0.95)
+			else:
+				flat.bg_color = Color(0.9, 0.18, 0.18, 0.95)
+	
+	if health_value_lbl:
+		health_value_lbl.text = "%d / %d" % [int(current_hp), int(max_hp)]
+	
+	# Progressive screen darkening each time bitten / as health depletes
+	var base_darkness := clampf((1.0 - (current_hp / max_hp)) * 0.85, 0.0, 0.88)
+	if damage_overlay:
+		if dark_overlay_tween and dark_overlay_tween.is_valid():
+			dark_overlay_tween.kill()
+		dark_overlay_tween = create_tween()
+		if was_damaged:
+			var flash_darkness := clampf(base_darkness + 0.35, 0.4, 0.95)
+			damage_overlay.color = Color(0.35, 0.02, 0.02, flash_darkness)
+			dark_overlay_tween.tween_property(damage_overlay, "color", Color(0.02, 0.0, 0.0, base_darkness), 0.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		else:
+			dark_overlay_tween.tween_property(damage_overlay, "color", Color(0.02, 0.0, 0.0, base_darkness), 0.3)
+
+func show_death_screen() -> void:
+	if not death_screen:
+		death_screen = get_node_or_null("DeathScreen")
+	if not damage_overlay:
+		damage_overlay = get_node_or_null("DamageDarkeningOverlay")
+	
+	if damage_overlay:
+		var tw := create_tween()
+		tw.tween_property(damage_overlay, "color", Color(0.0, 0.0, 0.0, 0.96), 0.8)
+	
+	if death_screen:
+		death_screen.visible = true
+		death_screen.modulate.a = 0.0
+		var tw2 := create_tween()
+		tw2.tween_property(death_screen, "modulate:a", 1.0, 1.0)
+	
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+func _on_respawn_pressed() -> void:
+	_play_sound(SOUND_NOTIF, 1.0)
+	get_tree().reload_current_scene()
+
 
 func _on_objective_updated(_index: int, title: String, desc: String) -> void:
 	_refresh_objective()

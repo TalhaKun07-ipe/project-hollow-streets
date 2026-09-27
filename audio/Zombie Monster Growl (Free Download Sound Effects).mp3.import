@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dsfdt1w5s75f6"
+path="res://.godot/imported/Zombie Monster Growl (Free Download Sound Effects).mp3-94216b3d5f4c1505d4eb0e92a10a1c43.mp3str"
+
+[deps]
+
+source_file="res://audio/Zombie Monster Growl (Free Download Sound Effects).mp3"
+dest_files=["res://.godot/imported/Zombie Monster Growl (Free Download Sound Effects).mp3-94216b3d5f4c1505d4eb0e92a10a1c43.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

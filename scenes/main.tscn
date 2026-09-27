@@ -32,6 +32,8 @@
 [ext_resource type="PackedScene" path="res://scenes/buildings/building_hospital.tscn" id="29_hospital"]
 [ext_resource type="PackedScene" path="res://scenes/props/pickup_gun.tscn" id="30_pickup_gun"]
 [ext_resource type="PackedScene" path="res://scenes/props/pickup_ammo.tscn" id="31_pickup_ammo"]
+[ext_resource type="PackedScene" uid="uid://czombie001" path="res://scenes/zombie_enemy.tscn" id="32_zombie"]
+
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g2els"]
 sky_top_color = Color(0.08, 0.1, 0.16, 1)
@@ -572,6 +574,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 9.15, 52)
 
 [node name="PickupAmmo_Hospital4F" parent="GameplayWorld" instance=ExtResource("31_pickup_ammo")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 13.65, 50)
+
+[node name="Zombie_Street1" parent="GameplayWorld" instance=ExtResource("32_zombie")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -22)
+
+[node name="Zombie_Alley" parent="GameplayWorld" instance=ExtResource("32_zombie")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, -42)
+
+[node name="Zombie_Gate" parent="GameplayWorld" instance=ExtResource("32_zombie")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 18)
+
+[node name="Zombie_HospitalEntrance" parent="GameplayWorld" instance=ExtResource("32_zombie")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 42)
+
+[node name="Zombie_Hospital2F" parent="GameplayWorld" instance=ExtResource("32_zombie")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 4.6, 54)
+
+[node name="Zombie_Hospital4F" parent="GameplayWorld" instance=ExtResource("32_zombie")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 13.6, 48)
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=585821862]
 

@@ -1,0 +1,97 @@
+[gd_scene format=3 uid="uid://c0ombie001"]
+
+[ext_resource type="Script" path="res://scripts/zombie_enemy.gd" id="1_zombie"]
+[ext_resource type="PackedScene" path="res://animation/copzombie_l_actisdato.fbx" id="2_model"]
+[ext_resource type="AudioStream" path="res://audio/sfx/zombie/zombie_groan.wav" id="3_groan"]
+[ext_resource type="AudioStream" path="res://audio/sfx/zombie/zombie_bite.wav" id="4_bite"]
+[ext_resource type="AudioStream" path="res://audio/sfx/zombie/zombie_hit.wav" id="5_hit"]
+[ext_resource type="AudioStream" path="res://audio/sfx/zombie/zombie_death.wav" id="6_death"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_zombie"]
+radius = 0.42
+height = 2.05
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_bg"]
+bg_color = Color(0.1, 0.04, 0.04, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.1, 0.1, 0.9)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
+bg_color = Color(0.85, 0.22, 0.18, 0.95)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_hp"]
+viewport_path = NodePath("HealthBarRoot/SubViewport")
+
+[node name="ZombieEnemy" type="CharacterBody3D"]
+collision_layer = 5
+collision_mask = 3
+script = ExtResource("1_zombie")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.025, 0)
+shape = SubResource("CapsuleShape3D_zombie")
+
+[node name="ModelRoot" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
+
+[node name="copzombie_l_actisdato" parent="ModelRoot" instance=ExtResource("2_model")]
+
+[node name="HealthBarRoot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.22, 0)
+
+[node name="SubViewport" type="SubViewport" parent="HealthBarRoot"]
+transparent_bg = true
+size = Vector2i(100, 12)
+render_target_update_mode = 4
+
+[node name="ProgressBar" type="ProgressBar" parent="HealthBarRoot/SubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_hp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
+max_value = 60.0
+value = 60.0
+show_percentage = false
+
+[node name="Sprite3D" type="Sprite3D" parent="HealthBarRoot"]
+visible = false
+billboard = 1
+double_sided = false
+no_depth_test = true
+texture = SubResource("ViewportTexture_hp")
+pixel_size = 0.0075
+
+[node name="SFXGroan" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_groan")
+volume_db = 2.0
+max_distance = 25.0
+attenuation_filter_cutoff_hz = 3500.0
+
+[node name="SFXBite" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4_bite")
+volume_db = 4.0
+max_distance = 18.0
+
+[node name="SFXHit" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_hit")
+volume_db = 3.0
+max_distance = 20.0
+
+[node name="SFXDeath" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_death")
+volume_db = 3.0
+max_distance = 25.0
