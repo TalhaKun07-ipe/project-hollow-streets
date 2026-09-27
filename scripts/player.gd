@@ -106,8 +106,28 @@ func _ready() -> void:
 	if torch_mesh:
 		torch_mesh.visible = true
 
-	if anim_player and anim_player.has_animation("idle"):
-		anim_player.play("idle")
+	if anim_player:
+		anim_player.playback_default_blend_time = 0.25
+		anim_player.set_blend_time("idle", "walk", 0.28)
+		anim_player.set_blend_time("walk", "idle", 0.32)
+		anim_player.set_blend_time("idle", "run", 0.25)
+		anim_player.set_blend_time("run", "idle", 0.32)
+		anim_player.set_blend_time("walk", "run", 0.22)
+		anim_player.set_blend_time("run", "walk", 0.22)
+		anim_player.set_blend_time("idle", "crouch_idle", 0.25)
+		anim_player.set_blend_time("crouch_idle", "idle", 0.25)
+		anim_player.set_blend_time("crouch_idle", "crouch_walk", 0.25)
+		anim_player.set_blend_time("crouch_walk", "crouch_idle", 0.28)
+		anim_player.set_blend_time("walk", "crouch_walk", 0.25)
+		anim_player.set_blend_time("crouch_walk", "walk", 0.25)
+		anim_player.set_blend_time("idle", "jump", 0.12)
+		anim_player.set_blend_time("walk", "jump", 0.12)
+		anim_player.set_blend_time("run", "jump", 0.12)
+		anim_player.set_blend_time("jump", "walk", 0.22)
+		anim_player.set_blend_time("jump", "run", 0.22)
+		anim_player.set_blend_time("jump", "idle", 0.25)
+		if anim_player.has_animation("idle"):
+			anim_player.play("idle")
 
 	# Find UI controllers in scene
 	inventory_ui = get_tree().root.find_child("InventoryUI", true, false)
@@ -367,6 +387,15 @@ func _physics_process(delta: float) -> void:
 			landing_player.pitch_scale = randf_range(0.95, 1.05)
 			landing_player.volume_db = 0.0
 			landing_player.play()
+		if anim_player:
+			if is_crouching:
+				anim_player.play("crouch_walk" if current_speed > 0.2 else "crouch_idle", 0.18)
+			elif current_speed > 5.0:
+				anim_player.play("run", 0.20)
+			elif current_speed > 0.2:
+				anim_player.play("walk", 0.22)
+			else:
+				anim_player.play("idle", 0.26)
 	was_on_floor = is_on_floor()
 
 	# Footsteps audio handling (Continuous rhythmic stream from saad given assets)
@@ -423,8 +452,8 @@ func _update_animation(delta: float, move_dir: Vector3) -> void:
 		if is_crouching:
 			if current_speed > 0.2:
 				if anim_player.current_animation != "crouch_walk":
-					anim_player.play("crouch_walk", 0.2)
-				anim_player.speed_scale = clampf(current_speed / crouch_speed, 0.7, 1.4)
+					anim_player.play("crouch_walk", 0.25)
+				anim_player.speed_scale = clampf(current_speed / crouch_speed, 0.75, 1.35)
 			else:
 				if anim_player.current_animation != "crouch_idle" and anim_player.current_animation != "crouch":
 					anim_player.play("crouch_idle", 0.25)
@@ -432,34 +461,22 @@ func _update_animation(delta: float, move_dir: Vector3) -> void:
 		elif not is_on_floor():
 			if anim_player.has_animation("jump"):
 				if anim_player.current_animation != "jump" and anim_player.current_animation != "jumping":
-					anim_player.play("jump", 0.15)
+					anim_player.play("jump", 0.12)
 				anim_player.speed_scale = 1.0
 			elif anim_player.current_animation != "":
 				anim_player.speed_scale = 0.5
 		elif current_speed > 5.0:
 			if anim_player.current_animation != "run":
-				anim_player.play("run", 0.2)
-			anim_player.speed_scale = clampf(current_speed / run_speed, 0.8, 1.3)
+				anim_player.play("run", 0.22)
+			anim_player.speed_scale = clampf(current_speed / run_speed, 0.85, 1.25)
 		elif current_speed > 0.2:
-			if anim_player.current_animation == "idle":
-				if anim_player.has_animation("start_walking"):
-					anim_player.play("start_walking", 0.15)
-					anim_player.speed_scale = clampf(current_speed / walk_speed, 0.9, 1.4)
-				else:
-					anim_player.play("walk", 0.2)
-					anim_player.speed_scale = clampf(current_speed / walk_speed, 0.7, 1.3)
-			elif anim_player.current_animation == "start_walking" or anim_player.current_animation == "walk_start":
-				if anim_player.current_animation_position > 0.6 or not anim_player.is_playing():
-					anim_player.play("walk", 0.25)
-				anim_player.speed_scale = clampf(current_speed / walk_speed, 0.8, 1.3)
-			elif anim_player.current_animation != "walk":
-				anim_player.play("walk", 0.2)
-				anim_player.speed_scale = clampf(current_speed / walk_speed, 0.7, 1.3)
-			else:
-				anim_player.speed_scale = clampf(current_speed / walk_speed, 0.7, 1.3)
+			if anim_player.current_animation != "walk":
+				# Initiate stride directly into smooth walking loop without dead-zone delay
+				anim_player.play("walk", 0.28)
+			anim_player.speed_scale = clampf(current_speed / walk_speed, 0.8, 1.25)
 		else:
 			if anim_player.current_animation != "idle":
-				anim_player.play("idle", 0.25)
+				anim_player.play("idle", 0.30)
 			anim_player.speed_scale = 1.0
 
 	# --- Turn Banking / Leaning ---

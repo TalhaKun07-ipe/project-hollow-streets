@@ -25,9 +25,12 @@ GameManager="*res://scripts/game_manager.gd"
 
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/window_width_override=1920
+window/size/window_height_override=1080
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [input]
 
@@ -97,4 +100,11 @@ crouch={
 [rendering]
 
 anti_aliasing/quality/msaa_3d=2
+anti_aliasing/quality/screen_space_aa=1
 environment/defaults/default_clear_color=Color(0.05, 0.05, 0.08, 1)
+environment/ssao/quality=2
+environment/ssao/half_size=false
+textures/default_filters/anisotropic_filtering_level=4
+scaling_3d/mode=1
+scaling_3d/scale=1.0
+scaling_3d/fsr_sharpness=0.2
