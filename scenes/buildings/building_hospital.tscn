@@ -1,167 +1,185 @@
-[gd_scene format=3 uid="uid://chospitalbld02"]
+[gd_scene format=3]
 
 [ext_resource type="Texture2D" path="res://textures/building_brick_facade.png" id="1_brick"]
 [ext_resource type="Texture2D" path="res://textures/sidewalk_concrete.png" id="2_concrete"]
 [ext_resource type="PackedScene" path="res://scenes/props/hospital_door.tscn" id="3_door"]
 [ext_resource type="PackedScene" path="res://scenes/props/pickup_hospital_key.tscn" id="4_key"]
 [ext_resource type="PackedScene" path="res://scenes/props/pickup_ammo.tscn" id="5_ammo"]
+[ext_resource type="PackedScene" path="res://scenes/props/hospital_clue_note.tscn" id="6_note"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_facade"]
 albedo_texture = ExtResource("1_brick")
-uv1_scale = Vector3(4, 3, 1)
+uv1_scale = Vector3(5, 4, 1)
 roughness = 0.85
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor_tiles"]
 albedo_texture = ExtResource("2_concrete")
-uv1_scale = Vector3(5, 5, 1)
+uv1_scale = Vector3(6, 6, 1)
 roughness = 0.45
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_int_wall"]
-albedo_color = Color(0.55, 0.58, 0.54, 1)
+albedo_color = Color(0.48, 0.52, 0.48, 1)
 roughness = 0.8
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stair"]
-albedo_color = Color(0.28, 0.28, 0.3, 1)
+albedo_color = Color(0.25, 0.25, 0.28, 1)
 roughness = 0.65
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sign"]
-albedo_color = Color(0.9, 0.2, 0.15, 1)
+albedo_color = Color(0.85, 0.15, 0.12, 1)
 emission_enabled = true
-emission = Color(0.9, 0.25, 0.15, 1)
-emission_energy_multiplier = 2.0
+emission = Color(0.95, 0.2, 0.15, 1)
+emission_energy_multiplier = 2.8
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
-albedo_color = Color(0.25, 0.26, 0.28, 1)
+albedo_color = Color(0.22, 0.23, 0.25, 1)
 metallic = 0.85
-roughness = 0.3
+roughness = 0.35
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_desk"]
-albedo_color = Color(0.35, 0.28, 0.22, 1)
+albedo_color = Color(0.32, 0.25, 0.2, 1)
 roughness = 0.7
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bed"]
-albedo_color = Color(0.65, 0.68, 0.7, 1)
+albedo_color = Color(0.62, 0.65, 0.68, 1)
 roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glass"]
+albedo_color = Color(0.2, 0.35, 0.4, 0.6)
+roughness = 0.15
+emission_enabled = true
+emission = Color(0.3, 0.5, 0.6, 1)
+emission_energy_multiplier = 0.4
 
 [sub_resource type="BoxMesh" id="BoxMesh_ext_portal_side"]
 material = SubResource("StandardMaterial3D_facade")
-size = Vector3(12.4, 22.5, 0.6)
+size = Vector3(12.8, 22.5, 0.6)
 
 [sub_resource type="BoxMesh" id="BoxMesh_ext_portal_top"]
 material = SubResource("StandardMaterial3D_facade")
-size = Vector3(3.2, 19.3, 0.6)
+size = Vector3(6.4, 18.3, 0.6)
 
 [sub_resource type="BoxMesh" id="BoxMesh_ext_wall_ns"]
 material = SubResource("StandardMaterial3D_facade")
-size = Vector3(28, 22.5, 0.6)
+size = Vector3(32, 22.5, 0.6)
 
 [sub_resource type="BoxMesh" id="BoxMesh_ext_wall_ew"]
 material = SubResource("StandardMaterial3D_facade")
-size = Vector3(0.6, 22.5, 24)
+size = Vector3(0.6, 22.5, 32)
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 material = SubResource("StandardMaterial3D_floor_tiles")
-size = Vector3(20, 0.25, 23)
+size = Vector3(22, 0.25, 31)
 
 [sub_resource type="BoxMesh" id="BoxMesh_stair_landing"]
 material = SubResource("StandardMaterial3D_floor_tiles")
-size = Vector3(7.4, 0.25, 10)
+size = Vector3(8.5, 0.25, 12)
 
 [sub_resource type="BoxMesh" id="BoxMesh_int_wall_x"]
 material = SubResource("StandardMaterial3D_int_wall")
-size = Vector3(10, 4.2, 0.25)
+size = Vector3(11, 4.2, 0.25)
 
 [sub_resource type="BoxMesh" id="BoxMesh_int_wall_z"]
 material = SubResource("StandardMaterial3D_int_wall")
-size = Vector3(0.25, 4.2, 23)
+size = Vector3(0.25, 4.2, 31)
 
 [sub_resource type="BoxMesh" id="BoxMesh_stair_ramp"]
 material = SubResource("StandardMaterial3D_stair")
-size = Vector3(3.2, 0.3, 6.2)
+size = Vector3(3.6, 0.3, 7.8)
 
 [sub_resource type="BoxMesh" id="BoxMesh_desk"]
 material = SubResource("StandardMaterial3D_desk")
-size = Vector3(3.5, 0.9, 1.2)
+size = Vector3(4.2, 0.9, 1.4)
 
 [sub_resource type="BoxMesh" id="BoxMesh_bed"]
 material = SubResource("StandardMaterial3D_bed")
-size = Vector3(1.2, 0.85, 2.2)
+size = Vector3(1.3, 0.85, 2.4)
 
 [sub_resource type="BoxMesh" id="BoxMesh_sign_board"]
 material = SubResource("StandardMaterial3D_sign")
-size = Vector3(8.5, 1.2, 0.15)
+size = Vector3(11.5, 1.4, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_canopy"]
+material = SubResource("StandardMaterial3D_metal")
+size = Vector3(8.2, 0.3, 4.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ext_portal_side"]
-size = Vector3(12.4, 22.5, 0.6)
+size = Vector3(12.8, 22.5, 0.6)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ext_portal_top"]
-size = Vector3(3.2, 19.3, 0.6)
+size = Vector3(6.4, 18.3, 0.6)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ext_ns"]
-size = Vector3(28, 22.5, 0.6)
+size = Vector3(32, 22.5, 0.6)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ext_ew"]
-size = Vector3(0.6, 22.5, 24)
+size = Vector3(0.6, 22.5, 32)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
-size = Vector3(20, 0.25, 23)
+size = Vector3(22, 0.25, 31)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_stair_landing"]
-size = Vector3(7.4, 0.25, 10)
+size = Vector3(8.5, 0.25, 12)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_int_wall_x"]
-size = Vector3(10, 4.2, 0.25)
+size = Vector3(11, 4.2, 0.25)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_int_wall_z"]
-size = Vector3(0.25, 4.2, 23)
+size = Vector3(0.25, 4.2, 31)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_stair_ramp"]
-size = Vector3(3.2, 0.3, 6.2)
+size = Vector3(3.6, 0.3, 7.8)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_desk"]
-size = Vector3(3.5, 0.9, 1.2)
+size = Vector3(4.2, 0.9, 1.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bed"]
+size = Vector3(1.3, 0.85, 2.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_canopy"]
+size = Vector3(8.2, 0.3, 4.5)
 
 [node name="HospitalBuilding" type="Node3D"]
 
 [node name="Exterior" type="StaticBody3D" parent="."]
 
 [node name="WallNorthLeft" type="CollisionShape3D" parent="Exterior"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8, 11.25, -12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.6, 11.25, -16)
 shape = SubResource("BoxShape3D_ext_portal_side")
 
 [node name="MeshNorthLeft" type="MeshInstance3D" parent="Exterior/WallNorthLeft"]
 mesh = SubResource("BoxMesh_ext_portal_side")
 
 [node name="WallNorthRight" type="CollisionShape3D" parent="Exterior"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, 11.25, -12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.6, 11.25, -16)
 shape = SubResource("BoxShape3D_ext_portal_side")
 
 [node name="MeshNorthRight" type="MeshInstance3D" parent="Exterior/WallNorthRight"]
 mesh = SubResource("BoxMesh_ext_portal_side")
 
 [node name="WallNorthTop" type="CollisionShape3D" parent="Exterior"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.85, -12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.35, -16)
 shape = SubResource("BoxShape3D_ext_portal_top")
 
 [node name="MeshNorthTop" type="MeshInstance3D" parent="Exterior/WallNorthTop"]
 mesh = SubResource("BoxMesh_ext_portal_top")
 
 [node name="WallSouth" type="CollisionShape3D" parent="Exterior"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.25, 12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.25, 16)
 shape = SubResource("BoxShape3D_ext_ns")
 
 [node name="MeshSouth" type="MeshInstance3D" parent="Exterior/WallSouth"]
 mesh = SubResource("BoxMesh_ext_wall_ns")
 
 [node name="WallEast" type="CollisionShape3D" parent="Exterior"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 11.25, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 11.25, 0)
 shape = SubResource("BoxShape3D_ext_ew")
 
 [node name="MeshEast" type="MeshInstance3D" parent="Exterior/WallEast"]
 mesh = SubResource("BoxMesh_ext_wall_ew")
 
 [node name="WallWest" type="CollisionShape3D" parent="Exterior"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 11.25, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 11.25, 0)
 shape = SubResource("BoxShape3D_ext_ew")
 
 [node name="MeshWest" type="MeshInstance3D" parent="Exterior/WallWest"]
@@ -171,26 +189,55 @@ mesh = SubResource("BoxMesh_ext_wall_ew")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 22.6, 0)
 shape = SubResource("BoxShape3D_floor")
 
+[node name="EntranceCanopy" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.4, -18.2)
+
+[node name="Col" type="CollisionShape3D" parent="EntranceCanopy"]
+shape = SubResource("BoxShape3D_canopy")
+
+[node name="Mesh" type="MeshInstance3D" parent="EntranceCanopy/Col"]
+mesh = SubResource("BoxMesh_canopy")
+
+[node name="CanopyLight1" type="OmniLight3D" parent="EntranceCanopy"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, -0.4, 0)
+light_color = Color(1, 0.9, 0.7, 1)
+light_energy = 2.5
+omni_range = 6.0
+
+[node name="CanopyLight2" type="OmniLight3D" parent="EntranceCanopy"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, -0.4, 0)
+light_color = Color(1, 0.9, 0.7, 1)
+light_energy = 2.5
+omni_range = 6.0
+
 [node name="HospitalSign" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.8, -12.35)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.5, -16.35)
 mesh = SubResource("BoxMesh_sign_board")
 
 [node name="SignLight" type="OmniLight3D" parent="HospitalSign"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.6)
-light_color = Color(1, 0.35, 0.25, 1)
-light_energy = 3.5
-omni_range = 6.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.8)
+light_color = Color(1, 0.25, 0.2, 1)
+light_energy = 4.5
+omni_range = 8.0
 
-[node name="EntranceDoor" parent="." instance=ExtResource("3_door")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
-door_name = "Grand Hospital Main Entrance"
+[node name="SignLabel" type="Label3D" parent="HospitalSign"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.12)
+text = "HEISENBERG MEMORIAL HOSPITAL"
+font_size = 38
+modulate = Color(1, 0.9, 0.9, 1)
+outline_modulate = Color(0.6, 0.1, 0.1, 1)
+
+[node name="EntranceGrandDoors" parent="." instance=ExtResource("3_door")]
+transform = Transform3D(1.8, 0, 0, 0, 1.4, 0, 0, 0, 1, 0, 0, -15.9)
+door_name = "Heisenberg Grand Main Entrance"
 is_unlocked = true
+is_open = true
 double_door = true
 
 [node name="Floor1_Lobby" type="Node3D" parent="."]
 
 [node name="FloorSlab" type="StaticBody3D" parent="Floor1_Lobby"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 0)
 
 [node name="Col" type="CollisionShape3D" parent="Floor1_Lobby/FloorSlab"]
 shape = SubResource("BoxShape3D_floor")
@@ -199,7 +246,7 @@ shape = SubResource("BoxShape3D_floor")
 mesh = SubResource("BoxMesh_floor")
 
 [node name="LandingSlab" type="StaticBody3D" parent="Floor1_Lobby"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, -6)
 
 [node name="Col" type="CollisionShape3D" parent="Floor1_Lobby/LandingSlab"]
 shape = SubResource("BoxShape3D_stair_landing")
@@ -208,7 +255,7 @@ shape = SubResource("BoxShape3D_stair_landing")
 mesh = SubResource("BoxMesh_stair_landing")
 
 [node name="ReceptionDesk" type="StaticBody3D" parent="Floor1_Lobby"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.45, -7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -7.5)
 
 [node name="Col" type="CollisionShape3D" parent="Floor1_Lobby/ReceptionDesk"]
 shape = SubResource("BoxShape3D_desk")
@@ -216,41 +263,65 @@ shape = SubResource("BoxShape3D_desk")
 [node name="Mesh" type="MeshInstance3D" parent="Floor1_Lobby/ReceptionDesk/Col"]
 mesh = SubResource("BoxMesh_desk")
 
+[node name="Clue_ReceptionLog" parent="Floor1_Lobby" instance=ExtResource("6_note")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.95, -7.5)
+clue_title = "Receptionist's Logbook"
+clue_content = "02:18 AM - A girl (Hridy) rushed in from the mist, terrified. She bolted up toward the 2nd Floor Wards! Stairwell security door to 2F is locked. Key is inside the 1F Emergency Examination Room."
+prompt_text = "Read Receptionist's Logbook"
+marker_id = "clue_hosp_log1"
+
+[node name="EmergencyDesk" type="StaticBody3D" parent="Floor1_Lobby"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.45, -6)
+
+[node name="Col" type="CollisionShape3D" parent="Floor1_Lobby/EmergencyDesk"]
+shape = SubResource("BoxShape3D_desk")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor1_Lobby/EmergencyDesk/Col"]
+mesh = SubResource("BoxMesh_desk")
+
 [node name="KeyFloor2" parent="Floor1_Lobby" instance=ExtResource("4_key")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.95, -7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.95, -6)
 key_id = "hosp_key_floor2"
-key_name = "2nd Floor Ward Key"
-key_desc = "Brass key found on the reception counter. Tagged '2F Ward'. Unlocks the 2nd Floor stairwell door."
-prompt_text = "Take 2nd Floor Ward Key"
+key_name = "2F Ward Key"
+key_desc = "A tagged brass key marked 'Heisenberg 2F Ward'. Unlocks the stairwell gate to the second floor patient wards."
+prompt_text = "Take 2F Ward Key"
 
-[node name="LobbyLight" type="OmniLight3D" parent="Floor1_Lobby"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, -4)
-light_color = Color(0.9, 0.85, 0.7, 1)
-light_energy = 2.2
-omni_range = 10.0
+[node name="Bed1" type="StaticBody3D" parent="Floor1_Lobby"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.42, 4)
 
-[node name="DoorToFloor2" parent="Floor1_Lobby" instance=ExtResource("3_door")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6.2, 0, -6)
-door_name = "2nd Floor Stairwell Door"
-required_key_id = "hosp_key_floor2"
-key_display_name = "2nd Floor Ward Key"
-is_unlocked = false
-double_door = false
+[node name="Col" type="CollisionShape3D" parent="Floor1_Lobby/Bed1"]
+shape = SubResource("BoxShape3D_bed")
 
-[node name="Stairs_1_to_2" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.894427, 0.447214, 0, -0.447214, 0.894427, 10, 2.25, 0)
+[node name="Mesh" type="MeshInstance3D" parent="Floor1_Lobby/Bed1/Col"]
+mesh = SubResource("BoxMesh_bed")
 
-[node name="Col" type="CollisionShape3D" parent="Stairs_1_to_2"]
+[node name="StairsTo2F" type="StaticBody3D" parent="Floor1_Lobby"]
+transform = Transform3D(1, 0, 0, 0, 0.8829, 0.4695, 0, -0.4695, 0.8829, 11.5, 2.25, 2.5)
+
+[node name="Col" type="CollisionShape3D" parent="Floor1_Lobby/StairsTo2F"]
 shape = SubResource("BoxShape3D_stair_ramp")
 
-[node name="Mesh" type="MeshInstance3D" parent="Stairs_1_to_2/Col"]
+[node name="Mesh" type="MeshInstance3D" parent="Floor1_Lobby/StairsTo2F/Col"]
 mesh = SubResource("BoxMesh_stair_ramp")
+
+[node name="DoorStairs2F" parent="Floor1_Lobby" instance=ExtResource("3_door")]
+transform = Transform3D(1.4, 0, 0, 0, 1.25, 0, 0, 0, 1, 11.5, 0, -1.5)
+door_name = "2nd Floor Stairwell Security Gate"
+required_key_id = "hosp_key_floor2"
+key_display_name = "2F Ward Key"
+double_door = true
+
+[node name="LobbyLight" type="OmniLight3D" parent="Floor1_Lobby"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, -4)
+light_color = Color(0.85, 0.9, 0.75, 1)
+light_energy = 2.2
+omni_range = 14.0
 
 [node name="Floor2_Wards" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 0)
 
 [node name="FloorSlab" type="StaticBody3D" parent="Floor2_Wards"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 0)
 
 [node name="Col" type="CollisionShape3D" parent="Floor2_Wards/FloorSlab"]
 shape = SubResource("BoxShape3D_floor")
@@ -259,7 +330,7 @@ shape = SubResource("BoxShape3D_floor")
 mesh = SubResource("BoxMesh_floor")
 
 [node name="LandingSlab" type="StaticBody3D" parent="Floor2_Wards"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, 6)
 
 [node name="Col" type="CollisionShape3D" parent="Floor2_Wards/LandingSlab"]
 shape = SubResource("BoxShape3D_stair_landing")
@@ -268,7 +339,7 @@ shape = SubResource("BoxShape3D_stair_landing")
 mesh = SubResource("BoxMesh_stair_landing")
 
 [node name="NurseStationDesk" type="StaticBody3D" parent="Floor2_Wards"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0, 0.45, 2.0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -6)
 
 [node name="Col" type="CollisionShape3D" parent="Floor2_Wards/NurseStationDesk"]
 shape = SubResource("BoxShape3D_desk")
@@ -276,41 +347,68 @@ shape = SubResource("BoxShape3D_desk")
 [node name="Mesh" type="MeshInstance3D" parent="Floor2_Wards/NurseStationDesk/Col"]
 mesh = SubResource("BoxMesh_desk")
 
+[node name="Clue_NurseMemo" parent="Floor2_Wards" instance=ExtResource("6_note")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.95, -6)
+clue_title = "Head Nurse's Memo"
+clue_content = "Quarantine active. Dr. Heisenberg ordered the 3F Surgery Wing locked down. The Surgery Wing Key was locked inside Patient Ward M2 bedside drawer."
+prompt_text = "Read Head Nurse's Memo"
+marker_id = "clue_hosp_log2"
+
+[node name="WardBedM1" type="StaticBody3D" parent="Floor2_Wards"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.42, -6)
+
+[node name="Col" type="CollisionShape3D" parent="Floor2_Wards/WardBedM1"]
+shape = SubResource("BoxShape3D_bed")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor2_Wards/WardBedM1/Col"]
+mesh = SubResource("BoxMesh_bed")
+
+[node name="WardBedM2" type="StaticBody3D" parent="Floor2_Wards"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.42, 6)
+
+[node name="Col" type="CollisionShape3D" parent="Floor2_Wards/WardBedM2"]
+shape = SubResource("BoxShape3D_bed")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor2_Wards/WardBedM2/Col"]
+mesh = SubResource("BoxMesh_bed")
+
 [node name="KeyFloor3" parent="Floor2_Wards" instance=ExtResource("4_key")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0, 0.95, 2.0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0.95, 6)
 key_id = "hosp_key_floor3"
-key_name = "Surgery Wing Key"
-key_desc = "Stainless steel key stamped '3F Surgery'. Unlocks the 3rd Floor stairwell door."
-prompt_text = "Take Surgery Wing Key"
+key_name = "3F Surgery Wing Key"
+key_desc = "A heavy steel key labeled 'Heisenberg 3F Surgery Wing'. Grants access to the 3rd floor surgical suites."
+prompt_text = "Take 3F Surgery Wing Key"
 
-[node name="WardLight" type="OmniLight3D" parent="Floor2_Wards"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3.6, 0)
-light_color = Color(0.65, 0.8, 0.9, 1)
-light_energy = 2.0
-omni_range = 9.0
+[node name="Ammo2F" parent="Floor2_Wards" instance=ExtResource("5_ammo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0.5, -6)
 
-[node name="DoorToFloor3" parent="Floor2_Wards" instance=ExtResource("3_door")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6.2, 0, 6)
-door_name = "3rd Floor Surgery Stairwell Door"
-required_key_id = "hosp_key_floor3"
-key_display_name = "Surgery Wing Key"
-is_unlocked = false
-double_door = false
+[node name="StairsTo3F" type="StaticBody3D" parent="Floor2_Wards"]
+transform = Transform3D(1, 0, 0, 0, 0.8829, -0.4695, 0, 0.4695, 0.8829, 11.5, 2.25, -2.5)
 
-[node name="Stairs_2_to_3" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -0.894427, -0.447214, 0, 0.447214, -0.894427, 10, 6.75, 0)
-
-[node name="Col" type="CollisionShape3D" parent="Stairs_2_to_3"]
+[node name="Col" type="CollisionShape3D" parent="Floor2_Wards/StairsTo3F"]
 shape = SubResource("BoxShape3D_stair_ramp")
 
-[node name="Mesh" type="MeshInstance3D" parent="Stairs_2_to_3/Col"]
+[node name="Mesh" type="MeshInstance3D" parent="Floor2_Wards/StairsTo3F/Col"]
 mesh = SubResource("BoxMesh_stair_ramp")
+
+[node name="DoorStairs3F" parent="Floor2_Wards" instance=ExtResource("3_door")]
+transform = Transform3D(1.4, 0, 0, 0, 1.25, 0, 0, 0, 1, 11.5, 0, 2.0)
+door_name = "3rd Floor Surgery Security Gate"
+required_key_id = "hosp_key_floor3"
+key_display_name = "3F Surgery Wing Key"
+double_door = true
+
+[node name="Floor2Light" type="OmniLight3D" parent="Floor2_Wards"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, 0)
+light_color = Color(0.7, 0.8, 0.7, 1)
+light_energy = 1.8
+omni_range = 14.0
 
 [node name="Floor3_Surgery" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.0, 0)
 
 [node name="FloorSlab" type="StaticBody3D" parent="Floor3_Surgery"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 0)
 
 [node name="Col" type="CollisionShape3D" parent="Floor3_Surgery/FloorSlab"]
 shape = SubResource("BoxShape3D_floor")
@@ -319,7 +417,7 @@ shape = SubResource("BoxShape3D_floor")
 mesh = SubResource("BoxMesh_floor")
 
 [node name="LandingSlab" type="StaticBody3D" parent="Floor3_Surgery"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, -6)
 
 [node name="Col" type="CollisionShape3D" parent="Floor3_Surgery/LandingSlab"]
 shape = SubResource("BoxShape3D_stair_landing")
@@ -327,54 +425,69 @@ shape = SubResource("BoxShape3D_stair_landing")
 [node name="Mesh" type="MeshInstance3D" parent="Floor3_Surgery/LandingSlab/Col"]
 mesh = SubResource("BoxMesh_stair_landing")
 
-[node name="LabDesk" type="StaticBody3D" parent="Floor3_Surgery"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.0, 0.45, -4.0)
+[node name="OperatingTable" type="StaticBody3D" parent="Floor3_Surgery"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.45, -3)
 
-[node name="Col" type="CollisionShape3D" parent="Floor3_Surgery/LabDesk"]
+[node name="Col" type="CollisionShape3D" parent="Floor3_Surgery/OperatingTable"]
+shape = SubResource("BoxShape3D_bed")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor3_Surgery/OperatingTable/Col"]
+mesh = SubResource("BoxMesh_bed")
+
+[node name="SurgicalLight" type="SpotLight3D" parent="Floor3_Surgery/OperatingTable"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 3.2, 0)
+light_color = Color(0.4, 0.9, 0.95, 1)
+light_energy = 4.5
+spot_range = 6.0
+spot_angle = 45.0
+
+[node name="Clue_SurgeonReport" parent="Floor3_Surgery" instance=ExtResource("6_note")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.95, -3)
+clue_title = "Surgeon's Incident Report"
+clue_content = "The girl ran past the theater toward the ICU on 4F. Elevator is dead, use the security stairwell. The 4F ICU Security Keycard is resting on the laboratory table."
+prompt_text = "Read Surgeon's Incident Report"
+marker_id = "clue_hosp_log3"
+
+[node name="LabTable" type="StaticBody3D" parent="Floor3_Surgery"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.45, 6)
+
+[node name="Col" type="CollisionShape3D" parent="Floor3_Surgery/LabTable"]
 shape = SubResource("BoxShape3D_desk")
 
-[node name="Mesh" type="MeshInstance3D" parent="Floor3_Surgery/LabDesk/Col"]
+[node name="Mesh" type="MeshInstance3D" parent="Floor3_Surgery/LabTable/Col"]
 mesh = SubResource("BoxMesh_desk")
 
-[node name="KeyFloor5" parent="Floor3_Surgery" instance=ExtResource("4_key")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.0, 0.95, -4.0)
-key_id = "hosp_key_floor5"
-key_name = "ICU & Solarium Master Key"
-key_desc = "Master card key tagged '4F ICU & 5F Solarium'. Unlocks the stairwell to the top floor."
-prompt_text = "Take ICU & Solarium Master Key"
+[node name="KeyFloor4" parent="Floor3_Surgery" instance=ExtResource("4_key")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.95, 6)
+key_id = "hosp_key_floor4"
+key_name = "4F ICU Security Key"
+key_desc = "An encrypted magnetic keycard marked 'Heisenberg 4F ICU Access'. Opens the heavy blast door to the Intensive Care Unit."
+prompt_text = "Take 4F ICU Security Key"
 
 [node name="Ammo3F" parent="Floor3_Surgery" instance=ExtResource("5_ammo")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.15, -2.0)
-ammo_amount = 6
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 0.95, 6)
 
-[node name="SurgeryLight" type="OmniLight3D" parent="Floor3_Surgery"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 3.6, 0)
-light_color = Color(0.7, 0.95, 1, 1)
-light_energy = 2.4
-omni_range = 9.0
+[node name="StairsTo4F" type="StaticBody3D" parent="Floor3_Surgery"]
+transform = Transform3D(1, 0, 0, 0, 0.8829, 0.4695, 0, -0.4695, 0.8829, 11.5, 2.25, 2.5)
 
-[node name="DoorToFloor4" parent="Floor3_Surgery" instance=ExtResource("3_door")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6.2, 0, -6)
-door_name = "Upper Floors Stairwell Door"
-required_key_id = "hosp_key_floor5"
-key_display_name = "ICU & Solarium Master Key"
-is_unlocked = false
-double_door = false
-
-[node name="Stairs_3_to_4" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.894427, 0.447214, 0, -0.447214, 0.894427, 10, 11.25, 0)
-
-[node name="Col" type="CollisionShape3D" parent="Stairs_3_to_4"]
+[node name="Col" type="CollisionShape3D" parent="Floor3_Surgery/StairsTo4F"]
 shape = SubResource("BoxShape3D_stair_ramp")
 
-[node name="Mesh" type="MeshInstance3D" parent="Stairs_3_to_4/Col"]
+[node name="Mesh" type="MeshInstance3D" parent="Floor3_Surgery/StairsTo4F/Col"]
 mesh = SubResource("BoxMesh_stair_ramp")
+
+[node name="DoorStairs4F" parent="Floor3_Surgery" instance=ExtResource("3_door")]
+transform = Transform3D(1.4, 0, 0, 0, 1.25, 0, 0, 0, 1, 11.5, 0, -1.5)
+door_name = "4th Floor ICU Security Door"
+required_key_id = "hosp_key_floor4"
+key_display_name = "4F ICU Security Key"
+double_door = true
 
 [node name="Floor4_ICU" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.5, 0)
 
 [node name="FloorSlab" type="StaticBody3D" parent="Floor4_ICU"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 0)
 
 [node name="Col" type="CollisionShape3D" parent="Floor4_ICU/FloorSlab"]
 shape = SubResource("BoxShape3D_floor")
@@ -383,7 +496,7 @@ shape = SubResource("BoxShape3D_floor")
 mesh = SubResource("BoxMesh_floor")
 
 [node name="LandingSlab" type="StaticBody3D" parent="Floor4_ICU"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, 6)
 
 [node name="Col" type="CollisionShape3D" parent="Floor4_ICU/LandingSlab"]
 shape = SubResource("BoxShape3D_stair_landing")
@@ -391,58 +504,95 @@ shape = SubResource("BoxShape3D_stair_landing")
 [node name="Mesh" type="MeshInstance3D" parent="Floor4_ICU/LandingSlab/Col"]
 mesh = SubResource("BoxMesh_stair_landing")
 
+[node name="ICUDesk" type="StaticBody3D" parent="Floor4_ICU"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -6)
+
+[node name="Col" type="CollisionShape3D" parent="Floor4_ICU/ICUDesk"]
+shape = SubResource("BoxShape3D_desk")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor4_ICU/ICUDesk/Col"]
+mesh = SubResource("BoxMesh_desk")
+
+[node name="Clue_DirectorDirective" parent="Floor4_ICU" instance=ExtResource("6_note")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.95, -6)
+clue_title = "Director's Urgent Directive"
+clue_content = "The top floor Solarium is under emergency lockdown. Hridy is barricaded inside. The Master Solarium Key is inside ICU Isolation Ward 402 nightstand."
+prompt_text = "Read Director's Urgent Directive"
+marker_id = "clue_hosp_log4"
+
+[node name="ICUBed401" type="StaticBody3D" parent="Floor4_ICU"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.42, -6)
+
+[node name="Col" type="CollisionShape3D" parent="Floor4_ICU/ICUBed401"]
+shape = SubResource("BoxShape3D_bed")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor4_ICU/ICUBed401/Col"]
+mesh = SubResource("BoxMesh_bed")
+
+[node name="ICUBed402" type="StaticBody3D" parent="Floor4_ICU"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.42, 6)
+
+[node name="Col" type="CollisionShape3D" parent="Floor4_ICU/ICUBed402"]
+shape = SubResource("BoxShape3D_bed")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor4_ICU/ICUBed402/Col"]
+mesh = SubResource("BoxMesh_bed")
+
+[node name="KeyFloor5" parent="Floor4_ICU" instance=ExtResource("4_key")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0.95, 6)
+key_id = "hosp_key_floor5"
+key_name = "5F Solarium Master Key"
+key_desc = "A golden antique master key stamped 'Heisenberg Solarium'. Unlocks the top floor penthouse solarium where Hridy is barricaded."
+prompt_text = "Take 5F Solarium Master Key"
+
 [node name="Ammo4F" parent="Floor4_ICU" instance=ExtResource("5_ammo")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0, 0.15, 4.0)
-ammo_amount = 6
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0.5, 6)
 
-[node name="EmergencyLight" type="OmniLight3D" parent="Floor4_ICU"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 3.6, 0)
-light_color = Color(1, 0.25, 0.15, 1)
-light_energy = 3.5
-omni_range = 9.0
+[node name="StairsTo5F" type="StaticBody3D" parent="Floor4_ICU"]
+transform = Transform3D(1, 0, 0, 0, 0.8829, -0.4695, 0, 0.4695, 0.8829, 11.5, 2.25, -2.5)
 
-[node name="Stairs_4_to_5" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -0.894427, -0.447214, 0, 0.447214, -0.894427, 10, 15.75, 0)
-
-[node name="Col" type="CollisionShape3D" parent="Stairs_4_to_5"]
+[node name="Col" type="CollisionShape3D" parent="Floor4_ICU/StairsTo5F"]
 shape = SubResource("BoxShape3D_stair_ramp")
 
-[node name="Mesh" type="MeshInstance3D" parent="Stairs_4_to_5/Col"]
+[node name="Mesh" type="MeshInstance3D" parent="Floor4_ICU/StairsTo5F/Col"]
 mesh = SubResource("BoxMesh_stair_ramp")
 
-[node name="Floor5_TopSolarium" type="Node3D" parent="."]
+[node name="DoorStairs5F" parent="Floor4_ICU" instance=ExtResource("3_door")]
+transform = Transform3D(1.4, 0, 0, 0, 1.25, 0, 0, 0, 1, 11.5, 0, 2.0)
+door_name = "5th Floor Solarium Master Gate"
+required_key_id = "hosp_key_floor5"
+key_display_name = "5F Solarium Master Key"
+double_door = true
+
+[node name="Floor4RedLight" type="OmniLight3D" parent="Floor4_ICU"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, 0)
+light_color = Color(0.9, 0.2, 0.15, 1)
+light_energy = 2.4
+omni_range = 14.0
+
+[node name="Floor5_Solarium" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.0, 0)
 
-[node name="FloorSlab" type="StaticBody3D" parent="Floor5_TopSolarium"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 0)
+[node name="FloorSlab" type="StaticBody3D" parent="Floor5_Solarium"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
-[node name="Col" type="CollisionShape3D" parent="Floor5_TopSolarium/FloorSlab"]
+[node name="Col" type="CollisionShape3D" parent="Floor5_Solarium/FloorSlab"]
 shape = SubResource("BoxShape3D_floor")
 
-[node name="Mesh" type="MeshInstance3D" parent="Floor5_TopSolarium/FloorSlab/Col"]
+[node name="Mesh" type="MeshInstance3D" parent="Floor5_Solarium/FloorSlab/Col"]
 mesh = SubResource("BoxMesh_floor")
 
-[node name="LandingSlab" type="StaticBody3D" parent="Floor5_TopSolarium"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -6)
+[node name="SolariumBench" type="StaticBody3D" parent="Floor5_Solarium"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0.45, 7.5)
 
-[node name="Col" type="CollisionShape3D" parent="Floor5_TopSolarium/LandingSlab"]
-shape = SubResource("BoxShape3D_stair_landing")
+[node name="Col" type="CollisionShape3D" parent="Floor5_Solarium/SolariumBench"]
+shape = SubResource("BoxShape3D_desk")
 
-[node name="Mesh" type="MeshInstance3D" parent="Floor5_TopSolarium/LandingSlab/Col"]
-mesh = SubResource("BoxMesh_stair_landing")
+[node name="Mesh" type="MeshInstance3D" parent="Floor5_Solarium/SolariumBench/Col"]
+mesh = SubResource("BoxMesh_desk")
 
-[node name="SolariumDoor" parent="Floor5_TopSolarium" instance=ExtResource("3_door")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -5.0, 0, 5.0)
-door_name = "Top Floor Observation Room Door"
-is_unlocked = true
-double_door = false
-
-[node name="AtticWindowLight" type="SpotLight3D" parent="Floor5_TopSolarium"]
-transform = Transform3D(1, 0, 0, 0, -0.258819, 0.965926, 0, -0.965926, -0.258819, -8, 4.0, 8)
-light_color = Color(0.75, 0.85, 1, 1)
-light_energy = 4.0
-spot_range = 15.0
-spot_angle = 50.0
-
-[node name="HridyHidingSpot" type="Marker3D" parent="Floor5_TopSolarium"]
-transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, -9.5, 0.1, 7.5)
+[node name="SolariumLight" type="OmniLight3D" parent="Floor5_Solarium"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 2.5, 7.5)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 3.5
+omni_range = 10.0

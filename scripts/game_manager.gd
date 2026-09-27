@@ -58,8 +58,8 @@ var objectives: Array[Dictionary] = [
 	},
 	{
 		"id": "stage_7",
-		"title": "Search the Grand Hospital",
-		"desc": "Enter the 5-story Grand Hospital through the opened courtyard gate. Climb to the 5th floor top room to find Hridy.",
+		"title": "Search Heisenberg Hospital",
+		"desc": "Enter the 5-story Heisenberg Hospital through the grand entrance. Search the wards and follow the clues to find Hridy on the 5th floor.",
 		"completed": false
 	},
 	{
@@ -98,6 +98,15 @@ var inventory: Array[Dictionary] = [
 		"category": "Supplies",
 		"icon_symbol": "🧪",
 		"desc": "A sealed antique glass bottle containing an amber herbal extract. Keeps Saad calm and alert in the chilling night air.",
+		"usable": true,
+		"examinable": true
+	},
+	{
+		"id": "handgun",
+		"name": "9mm Service Handgun",
+		"category": "Weapons",
+		"icon_symbol": "🔫",
+		"desc": "Standard issue 9mm semi-automatic pistol. 6-round capacity. Press [1] or [G] to equip/holster, [Left Mouse] to fire, [R] to reload. Saad can walk while shooting.",
 		"usable": true,
 		"examinable": true
 	}
@@ -179,6 +188,15 @@ func start_new_game() -> void:
 			"category": "Supplies",
 			"icon_symbol": "🧪",
 			"desc": "A sealed antique glass bottle containing an amber herbal extract. Keeps Saad calm and alert in the chilling night air.",
+			"usable": true,
+			"examinable": true
+		},
+		{
+			"id": "handgun",
+			"name": "9mm Service Handgun",
+			"category": "Weapons",
+			"icon_symbol": "🔫",
+			"desc": "Standard issue 9mm semi-automatic pistol. 6-round capacity. Press [1] or [G] to equip/holster, [Left Mouse] to fire, [R] to reload. Saad can walk while shooting.",
 			"usable": true,
 			"examinable": true
 		}

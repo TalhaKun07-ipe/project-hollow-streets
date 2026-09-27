@@ -55,12 +55,11 @@ var current_health: float = 100.0
 var is_dead: bool = false
 var hurt_sound_player: AudioStreamPlayer3D = null
 
-# Weapon & Gun Combat State
-var has_gun: bool = false
+# Weapon & Gun Combat State (Built-in from start like flashlight)
+var has_gun: bool = true
 var is_gun_equipped: bool = false
-var is_drawing_gun: bool = false
 var gun_ammo_clip: int = 6
-var gun_ammo_reserve: int = 12
+var gun_ammo_reserve: int = 18
 const MAX_CLIP_SIZE: int = 6
 var is_shooting: bool = false
 var is_reloading: bool = false
@@ -603,12 +602,6 @@ func _update_animation(delta: float, move_dir: Vector3) -> void:
 			elif anim_player.current_animation != "":
 				anim_player.speed_scale = 0.5
 		elif is_gun_equipped:
-			if is_drawing_gun:
-				if anim_player.current_animation == "draw_gun" and anim_player.is_playing():
-					return
-				else:
-					is_drawing_gun = false
-			
 			# Walk and shoot animation blending without sliding
 			if is_shooting or shoot_cooldown > 0.0:
 				if current_speed > 0.2:
@@ -699,7 +692,6 @@ func _end_opening_cutscene() -> void:
 func unlock_gun() -> void:
 	has_gun = true
 	is_gun_equipped = true
-	_play_draw_gun()
 	_update_weapon_hud()
 	if hud_node and hud_node.has_method("show_notification"):
 		hud_node.show_notification("9MM HANDGUN EQUIPPED", "[LMB] Shoot | [RMB] Aim | [R] Reload | [1/G] Holster")
@@ -708,17 +700,7 @@ func toggle_gun() -> void:
 	if not has_gun or is_dead:
 		return
 	is_gun_equipped = not is_gun_equipped
-	if is_gun_equipped:
-		_play_draw_gun()
-	else:
-		is_drawing_gun = false
 	_update_weapon_hud()
-
-func _play_draw_gun() -> void:
-	if anim_player and anim_player.has_animation("draw_gun"):
-		is_drawing_gun = true
-		anim_player.stop()
-		anim_player.play("draw_gun", 0.15, 1.4)
 
 func add_ammo(amount: int) -> void:
 	gun_ammo_reserve += amount
