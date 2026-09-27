@@ -1,0 +1,47 @@
+newmtl body_mat
+Ka 1 1 1
+Kd 1 1 1
+Ks 0 0 0
+Ns 10
+d 1
+illum 1
+map_Kd body_diffuse.jpg
+
+newmtl hair_a_mat
+Ka 1 1 1
+Kd 1 1 1
+Ks 0 0 0
+Ns 10
+d 1
+illum 1
+map_Kd hair_diffuse.png
+map_d hair_diffuse.png
+
+newmtl hair_b_mat
+Ka 1 1 1
+Kd 1 1 1
+Ks 0 0 0
+Ns 10
+d 1
+illum 1
+map_Kd hair_diffuse.png
+map_d hair_diffuse.png
+
+newmtl shoes_mat
+Ka 1 1 1
+Kd 1 1 1
+Ks 0 0 0
+Ns 10
+d 1
+illum 1
+map_Kd shoes_diffuse.jpg
+
+newmtl clothes_mat
+Ka 1 1 1
+Kd 1 1 1
+Ks 0 0 0
+Ns 10
+d 1
+illum 1
+map_Kd clothes_diffuse.jpg
+

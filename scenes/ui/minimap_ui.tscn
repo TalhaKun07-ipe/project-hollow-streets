@@ -1,0 +1,170 @@
+[gd_scene format=3 uid="uid://cminimapui01"]
+
+[ext_resource type="Script" path="res://scripts/ui/minimap_ui.gd" id="1_map"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
+bg_color = Color(0.04, 0.04, 0.05, 0.82)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.65, 0.28, 0.22, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_info"]
+bg_color = Color(0.06, 0.06, 0.07, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.25, 0.2, 0.6)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="MinimapUI" type="Control"]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -210.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 270.0
+grow_horizontal = 0
+mouse_filter = 2
+script = ExtResource("1_map")
+
+[node name="MapFrame" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -85.0
+offset_right = 85.0
+offset_bottom = 170.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
+
+[node name="MapCanvas" type="Control" parent="MapFrame"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerMarker" type="Control" parent="MapFrame/MapCanvas"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Arrow" type="Polygon2D" parent="MapFrame/MapCanvas/PlayerMarker"]
+color = Color(0.95, 0.3, 0.25, 1)
+polygon = PackedVector2Array(0, -9, 6, 7, 0, 4, -6, 7)
+
+[node name="ObjectiveMarker" type="Control" parent="MapFrame/MapCanvas"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PulseRing" type="Control" parent="MapFrame/MapCanvas/ObjectiveMarker"]
+anchors_preset = 0
+
+[node name="RingPolygon" type="Polygon2D" parent="MapFrame/MapCanvas/ObjectiveMarker/PulseRing"]
+color = Color(0.95, 0.85, 0.3, 0.35)
+polygon = PackedVector2Array(0, -10, 7, -7, 10, 0, 7, 7, 0, 10, -7, 7, -10, 0, -7, -7)
+
+[node name="Icon" type="Polygon2D" parent="MapFrame/MapCanvas/ObjectiveMarker"]
+color = Color(1, 0.88, 0.35, 1)
+polygon = PackedVector2Array(0, -6, 4, -2, 6, 0, 4, 4, 0, 6, -4, 4, -6, 0, -4, -2)
+
+[node name="Compass" type="Control" parent="MapFrame"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -28.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = 28.0
+grow_horizontal = 0
+
+[node name="Needle" type="Label" parent="MapFrame/Compass"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(10, 10)
+theme_override_colors/font_color = Color(0.85, 0.3, 0.25, 1)
+theme_override_font_sizes/font_size = 11
+text = "▲"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InfoCard" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -95.0
+offset_top = -70.0
+offset_right = 95.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_info")
+
+[node name="VBox" type="VBoxContainer" parent="InfoCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 6.0
+offset_right = -8.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="TargetLabel" type="Label" parent="InfoCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.82, 0.55, 1)
+theme_override_font_sizes/font_size = 11
+text = "TARGET: CLUE"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="DistanceLabel" type="Label" parent="InfoCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.78, 0.75, 0.9)
+theme_override_font_sizes/font_size = 10
+text = "DISTANCE: 35m [E]"
+horizontal_alignment = 1

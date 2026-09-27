@@ -1,0 +1,216 @@
+[gd_scene format=3 uid="uid://cinventoryui01"]
+
+[ext_resource type="Script" path="res://scripts/ui/inventory_ui.gd" id="1_inv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.08, 0.08, 0.09, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.25, 0.22, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_box"]
+bg_color = Color(0.12, 0.11, 0.12, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.35, 0.35, 0.5)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
+bg_color = Color(0.24, 0.16, 0.14, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7, 0.3, 0.25, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="InventoryUI" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_inv")
+
+[node name="DimOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.02, 0.03, 0.82)
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -440.0
+offset_top = -280.0
+offset_right = 440.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 18.0
+offset_right = -20.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="LeftCol" type="VBoxContainer" parent="Panel/HBoxContainer"]
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Panel/HBoxContainer/LeftCol"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Panel/HBoxContainer/LeftCol/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.85, 0.78, 1)
+theme_override_font_sizes/font_size = 18
+text = "INVENTORY"
+
+[node name="KeyHint" type="Label" parent="Panel/HBoxContainer/LeftCol/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.55, 0.5, 0.8)
+theme_override_font_sizes/font_size = 13
+text = "[I] / [TAB]"
+
+[node name="Sep" type="HSeparator" parent="Panel/HBoxContainer/LeftCol"]
+modulate = Color(0.6, 0.25, 0.2, 0.8)
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/HBoxContainer/LeftCol"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ItemListVBox" type="VBoxContainer" parent="Panel/HBoxContainer/LeftCol/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="RightCol" type="VBoxContainer" parent="Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="ItemHeader" type="VBoxContainer" parent="Panel/HBoxContainer/RightCol"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="ItemTitle" type="Label" parent="Panel/HBoxContainer/RightCol/ItemHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.88, 0.8, 1)
+theme_override_font_sizes/font_size = 20
+text = "Select an item"
+
+[node name="ItemCategory" type="Label" parent="Panel/HBoxContainer/RightCol/ItemHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.45, 0.35, 0.9)
+theme_override_font_sizes/font_size = 12
+text = "CATEGORY: NONE"
+
+[node name="Sep2" type="HSeparator" parent="Panel/HBoxContainer/RightCol"]
+modulate = Color(0.4, 0.35, 0.35, 0.6)
+layout_mode = 2
+
+[node name="IconBox" type="Panel" parent="Panel/HBoxContainer/RightCol"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_box")
+
+[node name="ItemIcon" type="Label" parent="Panel/HBoxContainer/RightCol/IconBox"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -25.0
+offset_right = 30.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 38
+text = "📦"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DescMargin" type="MarginContainer" parent="Panel/HBoxContainer/RightCol"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="ItemDesc" type="Label" parent="Panel/HBoxContainer/RightCol/DescMargin"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.85, 0.82, 0.78, 0.95)
+theme_override_constants/line_spacing = 5
+theme_override_font_sizes/font_size = 14
+text = "Select an item from the inventory list to inspect its details."
+autowrap_mode = 3
+
+[node name="ActionsBox" type="HBoxContainer" parent="Panel/HBoxContainer/RightCol"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="UseBtn" type="Button" parent="Panel/HBoxContainer/RightCol/ActionsBox"]
+custom_minimum_size = Vector2(130, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "USE"
+
+[node name="ExamineBtn" type="Button" parent="Panel/HBoxContainer/RightCol/ActionsBox"]
+custom_minimum_size = Vector2(130, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "EXAMINE"
+
+[node name="CloseBtn" type="Button" parent="Panel/HBoxContainer/RightCol/ActionsBox"]
+custom_minimum_size = Vector2(110, 36)
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+text = "CLOSE"
+
+[node name="SFXPlayer" type="AudioStreamPlayer" parent="."]
+volume_db = -4.0
