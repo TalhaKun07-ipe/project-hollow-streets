@@ -540,10 +540,9 @@ func _update_animation(delta: float, move_dir: Vector3) -> void:
 			elif anim_player.current_animation != "":
 				anim_player.speed_scale = 0.5
 		elif is_gun_equipped:
-			if is_shooting:
+			if is_shooting or (anim_player.current_animation == "shoot" and anim_player.is_playing() and current_speed <= 0.2):
 				if anim_player.has_animation("shoot") and anim_player.current_animation != "shoot":
-					anim_player.play("shoot", 0.05)
-				anim_player.speed_scale = 1.0
+					anim_player.play("shoot", 0.05, 1.35)
 			elif current_speed > 5.0:
 				if anim_player.current_animation != "run":
 					anim_player.play("run", 0.22)
@@ -555,7 +554,7 @@ func _update_animation(delta: float, move_dir: Vector3) -> void:
 			else:
 				if anim_player.has_animation("gun_idle"):
 					if anim_player.current_animation != "gun_idle":
-						anim_player.play("gun_idle", 0.28)
+						anim_player.play("gun_idle", 0.25)
 				elif anim_player.current_animation != "idle":
 					anim_player.play("idle", 0.30)
 				anim_player.speed_scale = 1.0
@@ -624,6 +623,8 @@ func unlock_gun() -> void:
 	has_gun = true
 	is_gun_equipped = true
 	_update_weapon_hud()
+	if hud_node and hud_node.has_method("show_notification"):
+		hud_node.show_notification("9MM HANDGUN EQUIPPED", "[LMB] Shoot | [R] Reload | [1/G] Holster")
 
 func toggle_gun() -> void:
 	if not has_gun:
@@ -655,7 +656,7 @@ func fire_gun() -> void:
 		return
 	
 	gun_ammo_clip -= 1
-	shoot_cooldown = 0.35
+	shoot_cooldown = 0.42
 	is_shooting = true
 	
 	if gun_sound_player and is_inside_tree():
@@ -668,7 +669,7 @@ func fire_gun() -> void:
 	
 	if anim_player and anim_player.has_animation("shoot"):
 		anim_player.stop()
-		anim_player.play("shoot", 0.05)
+		anim_player.play("shoot", 0.05, 1.35)
 	
 	if spring_arm:
 		spring_arm.rotation.x = clamp(spring_arm.rotation.x + deg_to_rad(1.8), deg_to_rad(-55.0), deg_to_rad(30.0))

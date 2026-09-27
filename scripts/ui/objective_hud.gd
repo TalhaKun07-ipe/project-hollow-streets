@@ -28,6 +28,7 @@ extends Control
 @onready var weapon_panel: Panel = get_node_or_null("WeaponPanel")
 @onready var weapon_label: Label = get_node_or_null("WeaponPanel/WeaponLabel")
 @onready var ammo_label: Label = get_node_or_null("WeaponPanel/AmmoLabel")
+@onready var crosshair: Control = get_node_or_null("Crosshair")
 
 const SOUND_NOTIF: AudioStream = preload("res://assets/audio/flashlight_click_on.wav")
 const SOUND_PICKUP: AudioStream = preload("res://assets/audio/footstep_land.wav")
@@ -72,6 +73,10 @@ func _refresh_objective() -> void:
 	objective_desc_lbl.text = cur.get("desc", "")
 
 func update_weapon_hud(equipped: bool, clip: int, reserve: int) -> void:
+	if not crosshair:
+		crosshair = get_node_or_null("Crosshair")
+	if crosshair:
+		crosshair.visible = equipped
 	if not weapon_panel:
 		weapon_panel = get_node_or_null("WeaponPanel")
 	if not weapon_panel:

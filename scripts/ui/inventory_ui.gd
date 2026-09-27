@@ -173,6 +173,12 @@ func _on_examine_pressed() -> void:
 		GameManager.subtitle_requested.emit("Saad", "Local apothecary blend. Has an earthy, bitter fragrance.", 2.8)
 	elif selected_item_id == "handgun":
 		GameManager.subtitle_requested.emit("Saad", "A reliable 9mm semi-automatic pistol. 6-shot capacity. Equip with [1] or [G], shoot with [Left Mouse], reload with [R].", 4.0)
+	elif selected_item_id == "hosp_key_floor2":
+		GameManager.subtitle_requested.emit("Saad", "Brass key tagged '2F Ward'. Unlocks the stairwell security door to Floor 2.", 3.2)
+	elif selected_item_id == "hosp_key_floor3":
+		GameManager.subtitle_requested.emit("Saad", "Stainless steel key stamped '3F Surgery'. Unlocks the stairwell door to Floor 3.", 3.2)
+	elif selected_item_id == "hosp_key_floor5":
+		GameManager.subtitle_requested.emit("Saad", "Master security card key for ICU and Solarium. Unlocks the upper stairwell to reach the 5th floor.", 3.5)
 
 func _play_sound(stream: AudioStream, pitch: float = 1.0) -> void:
 	if sfx_player and is_inside_tree():

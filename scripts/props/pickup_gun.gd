@@ -8,7 +8,8 @@ extends Node3D
 @export var random_spawn: bool = true
 
 const SPAWN_LOCATIONS: Array[Vector3] = [
-	Vector3(-3.2, 0.85, -92.5),  # On the hood of Hridy's abandoned car
+	Vector3(3.5, 0.45, -4.5),     # Near central crossing bench
+	Vector3(-3.2, 0.85, -92.5),   # On the hood of Hridy's abandoned car
 	Vector3(17.8, 0.45, 14.5),    # On the bench outside the Corner Shop
 	Vector3(-62.5, 0.85, -8.5),   # Inside the emergency callbox alcove
 	Vector3(-24.5, 0.45, -63.5),  # On a wooden crate by the alley substation
