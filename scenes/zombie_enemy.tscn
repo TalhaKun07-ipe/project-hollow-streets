@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/zombie_enemy.gd" id="1_zombie"]
 [ext_resource type="PackedScene" path="res://animation/copzombie_l_actisdato.fbx" id="2_model"]
-[ext_resource type="AudioStream" path="res://audio/sfx/zombie/zombie_groan.wav" id="3_groan"]
+[ext_resource type="AudioStream" path="res://audio/Zombie Monster Growl (Free Download Sound Effects).mp3" id="3_groan"]
 [ext_resource type="AudioStream" path="res://audio/sfx/zombie/zombie_bite.wav" id="4_bite"]
 [ext_resource type="AudioStream" path="res://audio/sfx/zombie/zombie_hit.wav" id="5_hit"]
 [ext_resource type="AudioStream" path="res://audio/sfx/zombie/zombie_death.wav" id="6_death"]
@@ -77,9 +77,12 @@ pixel_size = 0.0075
 
 [node name="SFXGroan" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("3_groan")
-volume_db = 2.0
-max_distance = 25.0
-attenuation_filter_cutoff_hz = 3500.0
+volume_db = -5.5
+pitch_scale = 0.72
+max_distance = 22.0
+unit_size = 2.5
+attenuation_filter_cutoff_hz = 2200.0
+attenuation_filter_db = -12.0
 
 [node name="SFXBite" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("4_bite")

@@ -82,13 +82,18 @@ func _physics_process(delta: float) -> void:
 		if dist_to_player > 0.05:
 			dir_to_player = diff.normalized()
 	
-	# Groan sound timer
+	# Low, deep guttural growl sound timer (RE2 Remake atmosphere)
 	groan_timer -= delta
 	if groan_timer <= 0.0:
-		groan_timer = randf_range(5.0, 11.0)
-		if (dist_to_player < detection_range + 5.0) and is_inside_tree() and sfx_groan and not sfx_groan.playing:
-			sfx_groan.pitch_scale = randf_range(0.85, 1.15)
-			sfx_groan.play()
+		groan_timer = randf_range(5.0, 9.5) if current_state == State.CHASE else randf_range(8.0, 15.0)
+		if (dist_to_player < detection_range + 6.0) and is_inside_tree() and sfx_groan and not sfx_groan.playing:
+			# Deeper and lower pitch (0.60 - 0.76) for ominous, heavy horror presence
+			sfx_groan.pitch_scale = randf_range(0.66, 0.76) if current_state == State.CHASE else randf_range(0.60, 0.70)
+			sfx_groan.volume_db = -5.0 if current_state == State.CHASE else -6.5
+			# Play from randomized position in the 31-second audio file
+			var max_len: float = sfx_groan.stream.get_length() if sfx_groan.stream else 30.0
+			var start_offset: float = randf_range(0.0, maxf(0.0, max_len - 4.5))
+			sfx_groan.play(start_offset)
 	
 	# Update Health Bar visibility based on proximity and damage
 	if health_bar_sprite:
@@ -255,6 +260,9 @@ func _die(hit_normal: Vector3) -> void:
 	
 	if col_shape:
 		col_shape.disabled = true
+	
+	if sfx_groan and sfx_groan.playing:
+		sfx_groan.stop()
 	
 	if is_inside_tree() and sfx_death:
 		sfx_death.pitch_scale = randf_range(0.95, 1.05)
