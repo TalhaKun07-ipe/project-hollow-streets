@@ -10,7 +10,7 @@ extends CharacterBody3D
 @export var walk_speed: float = 4.5
 @export var run_speed: float = 7.5
 @export var crouch_speed: float = 2.2
-@export var jump_velocity: float = 6.2
+@export var jump_velocity: float = 3.8
 @export var acceleration: float = 14.0
 @export var friction: float = 12.0
 @export var mouse_sensitivity: float = 0.0025
@@ -20,7 +20,7 @@ extends CharacterBody3D
 # Dynamic body response
 @export var lean_amount: float = 0.08
 @export var torch_sway: float = 0.03
-@export var landing_squash: float = 0.12
+@export var landing_squash: float = 0.0
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 

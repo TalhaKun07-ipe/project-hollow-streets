@@ -902,6 +902,10 @@ mesh = SubResource("ArrayMesh_2vppy")
 skin = SubResource("Skin_mtoiy")
 surface_material_override/0 = ExtResource("4_ybxst")
 
+[node name="RightHandAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=2089123456]
+bone_name = "mixamorig_RightHand"
+bone_idx = 34
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=616386582]
 libraries/ = ExtResource("5_xdvbq")
 playback_default_blend_time = 0.25
