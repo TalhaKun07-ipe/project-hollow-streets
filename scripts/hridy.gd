@@ -46,28 +46,27 @@ func _talk() -> void:
 	if hud_node and hud_node.has_method("hide_interact_prompt"):
 		hud_node.hide_interact_prompt(self)
 	
-	GameManager.advance_objective(
-		8,
-		"03:15 AM — Hridy Rescued",
-		"Found Hridy safe in the courtyard alcove. The nightmare of Hollow Streets is finally over."
-	)
-	
-	GameManager.subtitle_requested.emit(
-		"Hridy",
-		"Saad! You found me! I knew you would come... thank you for saving me!",
-		4.5
-	)
-	
-	# Saad responds in text subtitles
-	get_tree().create_timer(3.5).timeout.connect(func():
-		GameManager.play_saad_voice(
-			"",
-			"Hridy! You are safe. Thank God you are okay. Let us get out of this town.",
+	var gm: GameManager = get_tree().root.find_child("GameManager", true, false) as GameManager
+	if gm:
+		gm.advance_objective(
+			8,
+			"03:15 AM — Hridy Rescued",
+			"Found Hridy safe in the courtyard alcove. The nightmare of Hollow Streets is finally over."
+		)
+		gm.subtitle_requested.emit(
+			"Hridy",
+			"Saad! You found me! I knew you would come... thank you for saving me!",
 			4.5
 		)
-	)
-	
-	# Trigger victory screen after short delay
-	get_tree().create_timer(7.5).timeout.connect(func():
-		GameManager.game_won.emit()
-	)
+		get_tree().create_timer(3.5).timeout.connect(func():
+			if gm:
+				gm.play_saad_voice(
+					"",
+					"Hridy! You are safe. Thank God you are okay. Let us get out of this town.",
+					4.5
+				)
+		)
+		get_tree().create_timer(7.5).timeout.connect(func():
+			if gm:
+				gm.game_won.emit()
+		)

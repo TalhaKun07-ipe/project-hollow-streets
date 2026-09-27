@@ -26,6 +26,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 const FOOTSTEP_STREAM: AudioStream = preload("res://assets/saad given assets/footsteps sounds.mp3")
 const LAND_SOUND: AudioStream = preload("res://assets/audio/footstep_land.wav")
+const JUMP_TAKEOFF_SOUND: AudioStream = preload("res://audio/sfx/jump/jump_takeoff.wav")
 const FLASHLIGHT_ON: AudioStream = preload("res://assets/audio/flashlight_click_on.wav")
 const FLASHLIGHT_OFF: AudioStream = preload("res://assets/audio/flashlight_click_off.wav")
 
@@ -314,6 +315,13 @@ func _physics_process(delta: float) -> void:
 					is_crouching = false
 			else:
 				velocity.y = jump_velocity
+				if anim_player and anim_player.has_animation("jump"):
+					anim_player.play("jump", 0.08)
+				if landing_player and is_inside_tree():
+					landing_player.stream = JUMP_TAKEOFF_SOUND
+					landing_player.pitch_scale = randf_range(0.95, 1.05)
+					landing_player.volume_db = -2.0
+					landing_player.play()
 
 		# Movement direction relative to character rotation
 		var input_dir := Vector2.ZERO
@@ -421,16 +429,34 @@ func _update_animation(delta: float, move_dir: Vector3) -> void:
 				if anim_player.current_animation != "crouch_idle" and anim_player.current_animation != "crouch":
 					anim_player.play("crouch_idle", 0.25)
 				anim_player.speed_scale = 1.0
-		elif not is_on_floor() and anim_player.current_animation != "":
-			anim_player.speed_scale = 0.5
+		elif not is_on_floor():
+			if anim_player.has_animation("jump"):
+				if anim_player.current_animation != "jump" and anim_player.current_animation != "jumping":
+					anim_player.play("jump", 0.15)
+				anim_player.speed_scale = 1.0
+			elif anim_player.current_animation != "":
+				anim_player.speed_scale = 0.5
 		elif current_speed > 5.0:
 			if anim_player.current_animation != "run":
 				anim_player.play("run", 0.2)
 			anim_player.speed_scale = clampf(current_speed / run_speed, 0.8, 1.3)
 		elif current_speed > 0.2:
-			if anim_player.current_animation != "walk":
+			if anim_player.current_animation == "idle":
+				if anim_player.has_animation("start_walking"):
+					anim_player.play("start_walking", 0.15)
+					anim_player.speed_scale = clampf(current_speed / walk_speed, 0.9, 1.4)
+				else:
+					anim_player.play("walk", 0.2)
+					anim_player.speed_scale = clampf(current_speed / walk_speed, 0.7, 1.3)
+			elif anim_player.current_animation == "start_walking" or anim_player.current_animation == "walk_start":
+				if anim_player.current_animation_position > 0.6 or not anim_player.is_playing():
+					anim_player.play("walk", 0.25)
+				anim_player.speed_scale = clampf(current_speed / walk_speed, 0.8, 1.3)
+			elif anim_player.current_animation != "walk":
 				anim_player.play("walk", 0.2)
-			anim_player.speed_scale = clampf(current_speed / walk_speed, 0.7, 1.3)
+				anim_player.speed_scale = clampf(current_speed / walk_speed, 0.7, 1.3)
+			else:
+				anim_player.speed_scale = clampf(current_speed / walk_speed, 0.7, 1.3)
 		else:
 			if anim_player.current_animation != "idle":
 				anim_player.play("idle", 0.25)

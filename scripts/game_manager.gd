@@ -1,4 +1,5 @@
 extends Node
+class_name GameManager
 
 # Project Hollow Streets - Master Game Manager & State Controller
 # Manages objectives, inventory, journal, voice lines, and player UI state.
