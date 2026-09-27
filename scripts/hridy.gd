@@ -46,7 +46,7 @@ func _talk() -> void:
 	if hud_node and hud_node.has_method("hide_interact_prompt"):
 		hud_node.hide_interact_prompt(self)
 	
-	var gm: GameManager = get_tree().root.find_child("GameManager", true, false) as GameManager
+	var gm = GameManager
 	if gm:
 		gm.advance_objective(
 			8,

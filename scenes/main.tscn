@@ -17,6 +17,18 @@
 [ext_resource type="PackedScene" uid="uid://dbcornershp01" path="res://scenes/buildings/building_corner_shop.tscn" id="14_corner_shp"]
 [ext_resource type="AudioStream" uid="uid://b8tsrddyfpeqi" path="res://assets/saad given assets/background_music.mp3" id="15_music"]
 [ext_resource type="Script" path="res://scripts/background_music.gd" id="16_music_script"]
+[ext_resource type="PackedScene" uid="uid://csnowsh001" path="res://scenes/effects/snow_particles.tscn" id="17_snow"]
+[ext_resource type="PackedScene" path="res://scenes/props/car_abandoned.tscn" id="18_car"]
+[ext_resource type="PackedScene" path="res://scenes/props/clue_locket.tscn" id="19_locket"]
+[ext_resource type="PackedScene" path="res://scenes/props/emergency_callbox.tscn" id="20_callbox"]
+[ext_resource type="PackedScene" path="res://scenes/props/generator_substation.tscn" id="21_generator"]
+[ext_resource type="PackedScene" path="res://scenes/props/clue_key.tscn" id="22_key"]
+[ext_resource type="PackedScene" path="res://scenes/props/courtyard_gate.tscn" id="23_gate"]
+[ext_resource type="PackedScene" uid="uid://chridynpc001" path="res://scenes/hridy.tscn" id="24_hridy"]
+[ext_resource type="PackedScene" uid="uid://cobjhud001" path="res://scenes/ui/objective_hud.tscn" id="25_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_ui.tscn" id="26_inv"]
+[ext_resource type="PackedScene" uid="uid://cjournalui001" path="res://scenes/ui/journal_ui.tscn" id="27_journal"]
+[ext_resource type="PackedScene" uid="uid://cpausemenu01" path="res://scenes/ui/pause_menu.tscn" id="28_pause"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g2els"]
 sky_top_color = Color(0.08, 0.1, 0.16, 1)
@@ -488,35 +500,40 @@ shape = SubResource("BoxShape3D_boundary_ew")
 [node name="Player" parent="." unique_id=1342472726 instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 4.0)
 
+[node name="SnowSystem" parent="." instance=ExtResource("17_snow")]
+
+[node name="GameplayWorld" type="Node3D" parent="."]
+
+[node name="CarAbandoned" parent="GameplayWorld" instance=ExtResource("18_car")]
+transform = Transform3D(0.965926, 0, -0.258819, 0, 1, 0, 0.258819, 0, 0.965926, 0, 0, -95)
+
+[node name="ClueLocket" parent="GameplayWorld" instance=ExtResource("19_locket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.05, -6)
+
+[node name="EmergencyCallbox" parent="GameplayWorld" instance=ExtResource("20_callbox")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -65, 0, -8)
+
+[node name="GeneratorSubstation" parent="GameplayWorld" instance=ExtResource("21_generator")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -22, 0, -65)
+
+[node name="ClueKey" parent="GameplayWorld" instance=ExtResource("22_key")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5, 0, 13.5)
+
+[node name="CourtyardGate" parent="GameplayWorld" instance=ExtResource("23_gate")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 28, 0, 30)
+
+[node name="Hridy" parent="GameplayWorld" instance=ExtResource("24_hridy")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 36, 0, 32)
+
 [node name="UI" type="CanvasLayer" parent="." unique_id=585821862]
 
-[node name="Objective" type="Label" parent="UI" unique_id=1233439532]
-texture_filter = 6
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -200.0
-offset_top = 20.0
-offset_right = 200.0
-offset_bottom = 60.0
-grow_horizontal = 2
-theme_override_colors/font_color = Color(0.6593716, 0.9361086, 0.7032532, 0.9019608)
-theme_override_font_sizes/font_size = 22
-text = "Objective : Find Hridy"
-horizontal_alignment = 1
+[node name="ObjectiveHUD" parent="UI" instance=ExtResource("25_hud")]
 
-[node name="Hint" type="Label" parent="UI" unique_id=802888427]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = -80.0
-offset_right = 400.0
-offset_bottom = -20.0
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.9817882, 0.5967098, 0.3610967, 0.7019608)
-theme_override_font_sizes/font_size = 16
-text = "F-Torch | WASD-Move | Space-Jump"
+[node name="InventoryUI" parent="UI" instance=ExtResource("26_inv")]
+
+[node name="JournalUI" parent="UI" instance=ExtResource("27_journal")]
+
+[node name="PauseMenu" parent="UI" instance=ExtResource("28_pause")]
 
 [node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("15_music")
